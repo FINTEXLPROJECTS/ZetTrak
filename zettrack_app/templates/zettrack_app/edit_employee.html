@@ -1,0 +1,193 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+<!-- Page Header -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">Employees</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Manage and view your workforce</p>
+    </div>
+    <a href="{% url 'employee_list' %}" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.55rem 1.1rem; background:white; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.82rem; font-weight:700; color:#374151; text-decoration:none; box-shadow:0 1px 4px rgba(0,0,0,0.05);">&#8592; Back</a>
+</div>
+
+<!-- Tabs -->
+<div class="att-tabs">
+    <a href="{% url 'employee_list' %}" class="att-tab" style="text-decoration:none;">&#128101; Employees List</a>
+    <a href="{% url 'add_employee' %}" class="att-tab" style="text-decoration:none;">&#10133; Add Employee</a>
+    <a href="{% url 'import_employees' %}" class="att-tab" style="text-decoration:none;">&#128229; Import Employees</a>
+</div>
+
+    <div style="max-width: 900px; margin: 0 auto; background: white; padding: 3rem; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem;">
+            <div style="width: 48px; height: 48px; background: var(--primary-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                👤
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 1.75rem; color: #1e293b; font-weight: 800;">Edit Employee Profile</h2>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.95rem;">Updating information for <strong>{{ employee.get_full_name }}</strong> ({{ employee.employee_profile.employee_code }})</p>
+            </div>
+        </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                <!-- Personal Info Section Header -->
+                <div style="grid-column: span 2; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; margin-top: 0.5rem;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Personal Information</h3>
+                </div>
+
+                <div class="form-field">
+                    <label>First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<span class="error-msg">{{ form.first_name.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="form-field">
+                    <label>Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<span class="error-msg">{{ form.last_name.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="form-field">
+                    <label>Mobile Number</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}<span class="error-msg">{{ form.phone.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="form-field">
+                    <label>Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<span class="error-msg">{{ form.email.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Employment Details Header -->
+                <div style="grid-column: span 2; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; margin-top: 1rem;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Employment Details</h3>
+                </div>
+
+                <div class="form-field">
+                    <label>Employee Code/ID</label>
+                    {{ form.employee_code }}
+                </div>
+                <div class="form-field">
+                    <label>Joining Date</label>
+                    {{ form.joining_date }}
+                </div>
+                <div class="form-field">
+                    <label>Department</label>
+                    {{ form.department }}
+                </div>
+                <div class="form-field">
+                    <label>Designation</label>
+                    {{ form.designation }}
+                </div>
+                <div class="form-field">
+                    <label>Branch</label>
+                    {{ form.branch }}
+                </div>
+                <div class="form-field">
+                    <label>Shift</label>
+                    {{ form.shift }}
+                </div>
+                <div class="form-field">
+                    <label>Role</label>
+                    {{ form.role }}
+                </div>
+                <div class="form-field">
+                    <label>New Password <small style="font-weight: 400; color: #94a3b8;">(Leave blank to keep current)</small></label>
+                    {{ form.password }}
+                </div>
+            </div>
+
+            <div style="margin-top: 3.5rem; display: flex; gap: 1.25rem; border-top: 1px solid #f1f5f9; padding-top: 2rem;">
+                <button type="submit" class="save-btn">Update Profile</button>
+                <a href="{% url 'employee_list' %}" class="cancel-btn">Cancel Changes</a>
+            </div>
+        </form>
+    </div>
+
+<style>
+    .att-tabs {
+        display:flex; gap:0.5rem; padding:0.4rem; background:white;
+        border-radius:14px; margin-bottom:1.5rem;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
+        width:fit-content; flex-wrap:wrap;
+    }
+    .att-tab {
+        padding:0.6rem 1.1rem; border:none; border-radius:10px;
+        font-size:0.8rem; font-weight:600; color:#6b7280;
+        cursor:pointer; background:transparent; transition:all 0.2s;
+        display:flex; align-items:center; gap:0.5rem;
+    }
+    .att-tab:hover { color:#111827; background:#86bc25; }
+    .att-tab-active { background:#86bc25 !important; color:#111827 !important; font-weight:700; }
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .form-field label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #475569;
+    }
+    .form-field input, .form-field select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        color: #1e293b;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+    }
+    .form-field input:focus, .form-field select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(134, 188, 37, 0.1);
+    }
+    .save-btn {
+        flex: 2;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 1.1rem;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(134, 188, 37, 0.2);
+    }
+    .save-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(134, 188, 37, 0.3);
+    }
+    .cancel-btn {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        padding: 1.1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        color: #64748b;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background: white;
+    }
+    .cancel-btn:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #334155;
+    }
+    .error-msg {
+        color: #ef4444;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    input::placeholder {
+        color: #94a3b8;
+    }
+</style>
+{% endblock %}

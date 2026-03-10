@@ -1,0 +1,9 @@
+{% extends user.is_company_admin|yesno:'zettrack_app/admin_base.html,zettrack_app/employee_base.html' %}
+
+{% block admin_content %}
+    {% include 'zettrack_app/notifications_content.html' %}
+{% endblock %}
+
+{% block employee_content %}
+    {% include 'zettrack_app/notifications_content.html' %}
+{% endblock %}

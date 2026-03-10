@@ -1,0 +1,91 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: #1f2937;">Departments</h2>
+        <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #6b7280;">Manage your company departments</p>
+    </div>
+</div>
+
+<!-- Top Navigation Tabs -->
+<div class="dept-tabs">
+    <a href="{% url 'department_list' %}" class="dept-tab" style="text-decoration:none;">&#127970; Department List</a>
+    <a href="{% url 'add_department' %}" class="dept-tab dept-tab-active" style="text-decoration:none;">&#10133; Add Department</a>
+    <a href="{% url 'department_employees' %}" class="dept-tab" style="text-decoration:none;">&#128101; Department Employees</a>
+    <a href="{% url 'department_reports' %}" class="dept-tab" style="text-decoration:none;">&#128202; Department Reports</a>
+</div>
+
+<div style="max-width: 600px; background: white; border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden;">
+    <!-- Form Header -->
+    <div style="background: linear-gradient(135deg, #86bc25 0%, #6a9e1a 100%); padding: 2rem 2.5rem;">
+        <h2 style="margin: 0; color: white; font-size: 1.4rem; font-weight: 700;">
+            {% if dept %}Edit Department{% else %}Add New Department{% endif %}
+        </h2>
+        <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.875rem;">
+            {% if dept %}Update the department name below.{% else %}Enter a name for the new department.{% endif %}
+        </p>
+    </div>
+
+    <div style="padding: 2.5rem;">
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 600;
+                    {% if message.tags == 'error' %}background:#fef2f2; color:#dc2626; border:1px solid #fecaca;
+                    {% else %}background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" {% if dept %}action="{% url 'edit_department' dept.id %}"{% endif %}>
+            {% csrf_token %}
+            <div class="fg" style="margin-bottom: 2rem;">
+                <label class="flabel">Department Name <span style="color:#ef4444;">*</span></label>
+                <input type="text" name="name" value="{{ dept.name|default:'' }}" placeholder="e.g. Human Resources" required>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; padding: 0.875rem; background: linear-gradient(135deg, #86bc25, #6a9e1a); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                    {% if dept %}Update Department{% else %}Save Department{% endif %}
+                </button>
+                <a href="{% url 'department_list' %}" style="flex: 1; text-align: center; text-decoration: none; padding: 0.875rem; border: 2px solid #e5e7eb; border-radius: 12px; color: #6b7280; font-weight: 700; font-size: 0.95rem; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#86bc25'; this.style.color='#86bc25';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280';">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .dept-tabs {
+        display: flex; gap: 0.5rem; padding: 0.4rem; background: white;
+        border-radius: 14px; margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        width: fit-content; flex-wrap: wrap;
+    }
+    .dept-tab {
+        padding: 0.6rem 1.1rem; border: none; border-radius: 10px;
+        font-size: 0.8rem; font-weight: 600; color: #6b7280;
+        cursor: pointer; background: transparent; transition: all 0.2s;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dept-tab:hover { color: #111827; background: #86bc25; }
+    .dept-tab-active { background: #86bc25 !important; color: #111827 !important; font-weight: 700; }
+
+    .fg { display: flex; flex-direction: column; }
+    .flabel { font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem; }
+    .fg input {
+        width: 100%; padding: 0.7rem 0.9rem;
+        border: 1.5px solid #e5e7eb; border-radius: 10px;
+        font-size: 0.9rem; color: #1f2937; background: #f9fafb;
+        outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+    .fg input:focus { border-color: #86bc25; background: #fff; box-shadow: 0 0 0 3px rgba(134,188,37,0.12); }
+    .fg input::placeholder { color: #9ca3af; }
+</style>
+
+{% endblock %}

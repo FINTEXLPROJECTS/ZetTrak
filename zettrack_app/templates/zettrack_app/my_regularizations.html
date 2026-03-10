@@ -1,0 +1,51 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container">
+
+        <!-- Page Header -->
+        <div class="emp-page-header">
+            <div>
+                <h1 class="emp-page-title">Leave History</h1>
+                <p class="emp-page-subtitle">Your attendance regularization requests</p>
+            </div>
+            <a href="{% url 'apply_regularization' %}" class="emp-btn">+ New Request</a>
+        </div>
+
+        <div class="emp-card">
+            <table class="emp-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Applied On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td class="emp-td-bold">{{ req.attendance_date }}</td>
+                        <td>{{ req.reason }}</td>
+                        <td>
+                            <span class="emp-badge {% if req.status == 'approved' %}emp-badge-green{% elif req.status == 'rejected' %}emp-badge-red{% else %}emp-badge-yellow{% endif %}">
+                                {{ req.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="emp-td-muted">{{ req.applied_on|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr class="emp-empty"><td colspan="4">No regularization requests found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'employee_dashboard' %}" class="emp-link-muted">&larr; Back to Dashboard</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

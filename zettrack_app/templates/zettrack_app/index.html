@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZetTrack - Payroll & Attendance</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #86BC25;
+            --primary-dark: #6a961d;
+            --text-dark: #000000;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: var(--text-dark);
+        }
+        /* Header Styling */
+        header {
+            background: #fff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo h2 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #86bc25;
+            font-weight: 800;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+            margin: 0;
+            padding: 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: black;
+        }
+        .header-auth {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .login-btn {
+            text-decoration: none;
+            color: black;
+            font-weight: 700;
+        }
+        .signup-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(134, 188, 37, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--primary-color);
+            color:black;
+            padding: 6rem 5% 8rem 5%;
+            text-align: center;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .hero-tag {
+            background: rgba(0,0,0,0.1);
+            color: black;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin: 0 auto 1.5rem auto;
+            max-width: 900px;
+            line-height: 1.1;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 750px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.6;
+        }
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .btn-white {
+            background: white;
+            color: black;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .btn-outline {
+            border: 2px solid rgba(0,0,0,0.4);
+            color: black;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+        .btn-outline:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 6rem 5%;
+            background: #fff;
+            text-align: center;
+        }
+        .pricing-section .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+        .pricing-section .section-header h2 span {
+            color: var(--primary-color);
+        }
+        .pricing-section .section-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            text-align: left;
+            border: 2px solid #f3f4f6;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .pricing-card:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(134, 188, 37, 0.4);
+        }
+        .pricing-card:hover .price-amount,
+        .pricing-card:hover .price-desc,
+        .pricing-card:hover .feature-list li,
+        .pricing-card:hover .plan-badge,
+        .pricing-card:hover .pricing-cta {
+            color: #000;
+        }
+        .pricing-card:hover .pricing-cta {
+            background: #fff;
+        }
+        .pricing-card:hover .plan-badge {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .pricing-card:hover .feature-list li .check {
+            color: #000;
+        }
+        .pricing-card.pro {
+            background: linear-gradient(135deg, #1a1f2e, #2d3748);
+            border-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 8px 40px rgba(134,188,37,0.2);
+            overflow: hidden;
+        }
+        .pricing-card.pro:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+        .pricing-card.pro::after {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(134,188,37,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #047857;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+        }
+        .pricing-card.pro .plan-badge {
+            background: rgba(134, 188, 37, 0.15);
+            color: var(--primary-color);
+            border: 1px solid rgba(134, 188, 37, 0.3);
+        }
+        .price-amount {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #1f2937;
+            margin-bottom: 0.3rem;
+        }
+        .pricing-card.pro .price-amount {
+            color: #fff;
+        }
+        .price-desc {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .pricing-card.pro .price-desc {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        .pricing-card.pro .feature-list li {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .feature-list li strong {
+            font-weight: 700;
+        }
+        .feature-list li .check {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #10b981;
+            font-size: 1rem;
+        }
+        .pricing-card.pro .feature-list li .check {
+            color: var(--primary-color);
+        }
+        .pricing-cta {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            background: #f3f4f6;
+            color: #1f2937;
+            transition: 0.3s;
+        }
+        .pricing-cta:hover {
+            background: #e5e7eb;
+        }
+        .pricing-card.pro .pricing-cta {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: 0 6px 20px rgba(134,188,37,0.3);
+        }
+        .pricing-card.pro .pricing-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Contact Section Styling */
+        .contact-section {
+            padding: 6rem 5%;
+            background-color: #ffffff;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .contact-info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .info-card {
+            padding: 2rem;
+            background: #f9fafb;
+            border-radius: 20px;
+            border: 1px solid #eee;
+        }
+        .info-card .icon-box {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        .info-card h4 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .info-card p {
+            color: #6b7280;
+            margin: 0.2rem 0;
+            line-height: 1.5;
+        }
+        .contact-form-container {
+            padding: 3rem;
+            background: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.05);
+            border: 1px solid #f3f4f6;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 8rem 5%;
+            background: #f8fafc;
+            text-align: center;
+        }
+        .about-content {
+            max-width: 95%;
+            margin: 0 auto;
+        }
+        .about-section h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+        }
+        .about-content p {
+            font-size: 1.2rem;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+        .about-content > p {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* Value Prop Section */
+        .value-prop {
+            padding: 6rem 5% 2rem 5%;
+            text-align: center;
+        }
+        .value-prop h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        .value-prop h2 span {
+            color: black;
+        }
+        .value-prop p {
+            color: #6b7280;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Features Section */
+        .feature-grid {
+            padding: 2rem 5% 6rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-item {
+            padding: 3rem 2rem;
+            background: #fff;
+            border: 2px solid #f3f4f6;
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-align: left;
+        }
+        .feature-item:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(134, 188, 37, 0.4);
+        }
+        .feature-item .icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        .feature-item h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+        .feature-item p {
+            color: #6b7280;
+            line-height: 1.7;
+            transition: color 0.3s;
+            margin: 0;
+        }
+        .feature-item:hover h3, 
+        .feature-item:hover p {
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h2>ZetTrack</h2>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="header-auth">
+            <a href="#" class="login-btn">Login</a>
+            <a href="#" class="signup-btn">Sign Up Free</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-tag">🕒 ZET: Zero Error Time</div>
+        <h1>Master Your Attendance & Payroll with Zero Errors</h1>
+        <p>The smarter way to manage attendance and payroll. Track employee hours, manage leaves, and process salaries with <strong>Zero Error Time</strong> accuracy.</p>
+        <div class="hero-btns">
+            <a href="#" class="btn-white">Get Started</a>
+            <a href="#" class="btn-outline">Watch Demo</a>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="about-content">
+            <div class="hero-tag" style="background: rgba(0, 0, 0, 0.08); color: black;">Our Vision</div>
+            <h2>Revolutionizing HR with ZET</h2>
+            <p>ZetTrack was built on the principle of <strong>Zero Error Time (ZET)</strong>. We eliminate manual errors in workforce management, providing a SaaS platform that bridges attendance and payroll with absolute precision. Our mission is to empower teams to achieve perfection in timing and compensation.</p>
+        </div>
+    </section>
+
+    <section class="value-prop">
+        <h2>Smart Features, <span>Seamless Operations</span></h2>
+        <p>From smart attendance tracking to automated payroll processing, we've got you covered.</p>
+    </section>
+
+    <section id="features" class="feature-grid">
+        <div class="feature-item">
+            <span class="icon">📊</span>
+            <h3>Automated Payroll</h3>
+            <p>Say goodbye to spreadsheets. Automatically calculate gross-to-net pay, bonuses, and deductions with localized tax compliance.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📍</span>
+            <h3>Real-time Attendance</h3>
+            <p>Monitor your workforce attendance, shifts, and overtime in real-time from anywhere.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📝</span>
+            <h3>Leave Management</h3>
+            <p>Streamlined leave application and approval workflow. Automatically sync approved leaves with your payroll cycle for zero errors.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">👥</span>
+            <h3>Employee Management</h3>
+            <p>Centralized database to manage employee profiles, documents, and employment history with ease.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">👤</span>
+            <h3>Employee Self Service</h3>
+            <p>Empower employees to view payslips, apply for leaves, and update profile information independently.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">⏱️</span>
+            <h3>Overtime Tracking</h3>
+            <p>Automatically track and calculate overtime hours based on company policy for accurate compensation.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🏖️</span>
+            <h3>Holiday Calendar</h3>
+            <p>Manage public holidays and optional leaves with a centralized calendar for all branches.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📈</span>
+            <h3>Reports & Analytics</h3>
+            <p>Gain deep insights into workforce trends, attendance patterns, and payroll costs with customizable reports.</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🛡️</span>
+            <h3>Role-Based Access</h3>
+            <p>Secure your data with granular permissions for admins, HR managers, and employees.</p>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing-section">
+        <div class="section-header">
+            <h2>Transparent Pricing, <span>Zero Surprises</span></h2>
+            <p>Start for free. Scale when you grow. No hidden fees, no contracts.</p>
+        </div>
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="plan-badge"><i class="fas fa-leaf"></i> Free Forever</div>
+                <div class="price-amount">0</div>
+                <div class="price-desc">per month — up to 10 employees</div>
+                <ul class="feature-list">
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Up to <strong>20 employees</strong></li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Attendance tracking</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Leave management</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Payroll processing</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Employee self-service portal</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Basic reports</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Email notifications</li>
+                </ul>
+                <a href="#" class="pricing-cta">Get Started Free</a>
+            </div>
+            <!-- Pro Plan -->
+            <div class="pricing-card pro">
+                <div class="plan-badge"><i class="fas fa-star"></i> Pro Plan</div>
+                <div class="price-amount">9</div>
+                <div class="price-desc">per month — for each employee</div>
+                <ul class="feature-list">
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> <strong>Unlimited employees</strong></li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Everything in Free</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Advanced payroll & deductions</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Custom reports & exports</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Department & designation hierarchy</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Bulk employee import</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Priority support</li>
+                    <li><span class="check"><i class="fas fa-check-circle"></i></span> Announcements & notifications</li>
+                </ul>
+                <a href="#" class="pricing-cta">Upgrade to Pro</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section" style="padding-top: 1rem;">
+        <div class="value-prop" style="padding-top: 0;">
+            <h2 style="margin-bottom: 0.5rem;">Get In <span>Touch</span></h2>
+            <p>We're here to help you revolutionize your workforce management.</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info-cards">
+                <div class="info-card">
+                    <div class="icon-box">📧</div>
+                    <h4>Email Us</h4>
+                    <p><a href="mailto:info@zettrak.com" style="color: inherit; text-decoration: none;">info@zettrak.com</a></p>
+                    <p><a href="mailto:support@zettrak.com" style="color: inherit; text-decoration: none;">support@zettrak.com</a></p>
+                </div>
+                <div class="info-card">
+                    <div class="icon-box">📞</div>
+                    <h4>Call Us</h4>
+                    <p>+91 98765 43210</p>
+                    <p>+91 98765 43211</p>
+                </div>
+                <div class="info-card">
+                    <div class="icon-box">🏢</div>
+                    <h4>Corporate Office</h4>
+                    <p>Level 5, Tech Hub Towers,</p>
+                    <p>HITEC City, Hyderabad, 500081</p>
+                    <p>India</p>
+                </div>
+            </div>
+            <div class="contact-form-container">
+                <h3 style="font-weight: 800; margin-bottom: 2rem;">Send us a Message</h3>
+                <form>
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="Enter your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label>Subject *</label>
+                        <input type="text" placeholder="How can we help?">
+                    </div>
+                    <div class="form-group">
+                        <label>Message *</label>
+                        <textarea rows="4" placeholder="Your message..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 ZetTrack. All rights reserved.</p>
+    </footer>
+</body>
+</html>

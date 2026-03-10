@@ -1,0 +1,159 @@
+<style>
+    /* Notification page styles – work under both admin and employee bases */
+    .notif-page { padding: 2rem; }
+    .notif-container { max-width: 980px; margin: 0 auto; }
+    .notif-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .notif-title { font-size: 1.5rem; font-weight: 800; color: #1f2937; margin: 0; }
+    .notif-subtitle { font-size: 0.82rem; color: #6b7280; margin: 0.2rem 0 0; }
+    .notif-card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 1.75rem; }
+    .notif-label { display: block; font-size: 0.82rem; font-weight: 700; color: #374151; margin-bottom: 0.4rem; }
+    .notif-input, .notif-select {
+        width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e5e7eb;
+        border-radius: 10px; background: #f9fafb; font-family: inherit;
+        font-size: 0.88rem; color: #1f2937; box-sizing: border-box;
+        transition: border-color 0.18s, background 0.18s;
+    }
+    .notif-input:focus, .notif-select:focus {
+        outline: none; border-color: #86bc25; background: white;
+        box-shadow: 0 0 0 3px rgba(134,188,37,0.1);
+    }
+    .notif-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: #86bc25; color: white; padding: 0.7rem 1.4rem;
+        border: none; border-radius: 10px; font-weight: 700; font-size: 0.875rem;
+        cursor: pointer; text-decoration: none; transition: background 0.18s;
+        white-space: nowrap;
+    }
+    .notif-btn:hover { background: #6a961d; }
+    .notif-btn-outline {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: transparent; color: #6b7280; border: 1.5px solid #d1d5db;
+        padding: 0.7rem 1.4rem; border-radius: 10px; font-weight: 700;
+        font-size: 0.875rem; cursor: pointer; text-decoration: none;
+        transition: border-color 0.18s, color 0.18s; white-space: nowrap;
+    }
+    .notif-btn-outline:hover { border-color: #86bc25; color: #86bc25; }
+    .notif-table { width: 100%; border-collapse: collapse; }
+    .notif-table thead tr { border-bottom: 2px solid #f3f4f6; }
+    .notif-table th {
+        padding: 0.85rem 1rem; font-size: 0.72rem; font-weight: 700;
+        color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; text-align: left;
+    }
+    .notif-table td {
+        padding: 1rem; font-size: 0.88rem; color: #1f2937;
+        border-bottom: 1px solid #f9fafb; vertical-align: middle;
+    }
+    .notif-table tbody tr:last-child td { border-bottom: none; }
+    .notif-table tbody tr:hover td { background: #fafafa; }
+    .notif-table .notif-empty td { padding: 3rem; text-align: center; color: #9ca3af; font-size: 0.9rem; }
+    .notif-td-muted { color: #6b7280; font-size: 0.82rem; }
+    .notif-badge {
+        display: inline-block; padding: 0.25rem 0.75rem; border-radius: 50px;
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em;
+    }
+    .notif-badge-green  { background: #d1fae5; color: #065f46; }
+    .notif-badge-yellow { background: #fef3c7; color: #92400e; }
+    .notif-badge-blue   { background: #dbeafe; color: #1e40af; }
+    .notif-badge-purple { background: #f3e8ff; color: #6b21a8; }
+    .notif-badge-gray   { background: #f3f4f6; color: #374151; }
+    .notif-link { color: #86bc25; text-decoration: none; font-weight: 700; font-size: 0.8rem; }
+    .notif-link:hover { color: #6a961d; }
+</style>
+
+<div class="notif-page">
+<div class="notif-container">
+
+    <!-- Page Header -->
+    <div class="notif-header">
+        <div>
+            <h1 class="notif-title">Notifications</h1>
+            <p class="notif-subtitle">Track and manage system alerts and employee actions</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="{% url 'mark_all_notifications_read' %}" class="notif-btn-outline">Mark all as read</a>
+            {% if user.is_company_admin %}
+            <a href="{% url 'notification_settings' %}" class="notif-btn">Notification Settings</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="notif-card" style="margin-bottom: 1.5rem;">
+        <form method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 150px;">
+                <label class="notif-label">Notification Type</label>
+                <select name="type" class="notif-select">
+                    <option value="">All Types</option>
+                    {% for t in types %}
+                    <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }} Notifications</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="flex: 1; min-width: 150px;">
+                <label class="notif-label">Month / Year</label>
+                <input type="month" name="date" value="{{ selected_date }}" class="notif-input">
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="notif-btn">Filter</button>
+                <a href="{% url 'notification_dashboard' %}" class="notif-btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Notifications Table -->
+    <div class="notif-card" style="padding: 0; overflow: hidden;">
+        <table class="notif-table">
+            <thead>
+                <tr>
+                    <th style="padding-left: 1.5rem;">Time</th>
+                    <th>Notification</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th style="padding-right: 1.5rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in notifications %}
+                <tr {% if not n.is_read %}style="background: rgba(134,188,37,0.03);"{% endif %}>
+                    <td style="padding-left: 1.5rem; white-space: nowrap;">
+                        <span style="font-weight: 600;">{{ n.created_at|date:"h:i A" }}</span><br>
+                        <span class="notif-td-muted">{{ n.created_at|date:"d M Y" }}</span>
+                    </td>
+                    <td style="font-weight: {% if not n.is_read %}700{% else %}500{% endif %};">{{ n.message }}</td>
+                    <td>
+                        <span class="notif-badge
+                            {% if n.notification_type == 'Leave' %}notif-badge-yellow
+                            {% elif n.notification_type == 'Payroll' %}notif-badge-green
+                            {% elif n.notification_type == 'Attendance' %}notif-badge-blue
+                            {% elif n.notification_type == 'Announcement' %}notif-badge-purple
+                            {% else %}notif-badge-gray{% endif %}">
+                            {{ n.notification_type }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if n.is_read %}
+                        <span style="color: #10b981; font-size: 0.8rem; font-weight: 600;">Read</span>
+                        {% else %}
+                        <span style="color: #f59e0b; font-size: 0.8rem; font-weight: 700;">Unread</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding-right: 1.5rem;">
+                        <div style="display: flex; gap: 0.75rem;">
+                            {% if not n.is_read %}
+                            <a href="{% url 'mark_notification_read' n.id %}" class="notif-link">Mark Read</a>
+                            {% endif %}
+                            <a href="{% url 'delete_notification' n.id %}"
+                               style="color: #ef4444; text-decoration: none; font-size: 0.8rem; font-weight: 700;"
+                               onclick="return confirm('Delete this notification?')">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="notif-empty"><td colspan="5">No notifications found matching your criteria.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>

@@ -1,0 +1,38 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div style="padding: 2rem;">
+    <section class="contact-section">
+    <div class="contact-grid" style="display: block; max-width: 500px; margin: 0 auto;">
+        <div class="contact-form-container">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Apply Regularization</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Attendance Date</label>
+                    <input type="date" name="attendance_date" required style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem;">
+                </div>
+                <div class="form-group" style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label>Expected In Time</label>
+                        <input type="time" name="expected_punch_in" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Expected Out Time</label>
+                        <input type="time" name="expected_punch_out" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reason for Correction</label>
+                    <textarea name="reason" rows="3" required placeholder="e.g., Forgot to punch, Technical issue, etc." style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem;"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit Request</button>
+            </form>
+            <p style="text-align: center; margin-top: 1.5rem;">
+                <a href="{% url 'employee_dashboard' %}" style="color: #6b7280;">Cancel & Go Back</a>
+            </p>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

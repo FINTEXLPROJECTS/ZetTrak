@@ -1,0 +1,146 @@
+{% extends "zettrack_app/base.html" %}
+
+{% block content %}
+
+<!-- Page Hero -->
+<div style="background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 60%, #3a4a2a 100%); color: white; padding: 5rem 5% 4rem; text-align: center; position: relative; overflow: hidden;">
+    <div style="position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(134,188,37,0.15) 0%,transparent 70%);border-radius:50%;"></div>
+    <div style="position:absolute;bottom:-80px;left:10%;width:400px;height:200px;background:radial-gradient(ellipse,rgba(134,188,37,0.08) 0%,transparent 70%);border-radius:50%;"></div>
+    <div style="position:relative;z-index:1;">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(134,188,37,0.15);border:1px solid rgba(134,188,37,0.3);color:#86bc25;font-size:0.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0.4rem 1.1rem;border-radius:50px;margin-bottom:1.5rem;">
+            <i class="fas fa-play-circle"></i> How It Works
+        </div>
+        <h1 style="font-size: 3rem; font-weight: 900; margin: 0 0 1rem; line-height: 1.15;">
+            Get Started with <span style="color:#86bc25;">ZetTrak</span> in Minutes
+        </h1>
+        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.6); max-width: 620px; margin: 0 auto 2rem; line-height: 1.7;">
+            Follow these simple steps to set up your company, manage employees, track attendance, and process payroll — all in one place.
+        </p>
+        <a href="{% url 'signup' %}" style="display:inline-flex;align-items:center;gap:0.6rem;background:#86bc25;color:white;padding:0.9rem 2rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:1rem;box-shadow:0 8px 24px rgba(134,188,37,0.35);">
+            <i class="fas fa-rocket"></i> Start Free Now
+        </a>
+    </div>
+</div>
+
+<!-- Steps -->
+<div style="max-width: 900px; margin: 0 auto; padding: 5rem 5%;">
+
+    <!-- Step 1 -->
+    <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;">
+        <div style="flex-shrink:0;width:60px;height:60px;background:linear-gradient(135deg,#86bc25,#5a8a10);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:white;box-shadow:0 6px 20px rgba(134,188,37,0.35);">1</div>
+        <div style="background:white;border-radius:16px;padding:2rem;flex:1;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+                <i class="fas fa-building" style="color:#86bc25;font-size:1.2rem;"></i>
+                <h3 style="margin:0;font-size:1.25rem;font-weight:800;color:#1f2937;">Sign Up & Register Your Company</h3>
+            </div>
+            <p style="margin:0;color:#6b7280;line-height:1.8;">Click <strong>Sign Up Free</strong> on the home page. Enter your company name, email, and password. ZetTrak creates a dedicated workspace for your organisation — isolated and secure.</p>
+            <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:0.6rem;">
+                <span style="background:rgba(134,188,37,0.1);color:#5a8a10;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Company Registration</span>
+                <span style="background:rgba(134,188,37,0.1);color:#5a8a10;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Admin Account</span>
+                <span style="background:rgba(134,188,37,0.1);color:#5a8a10;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Instant Setup</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;">
+        <div style="flex-shrink:0;width:60px;height:60px;background:linear-gradient(135deg,#10b981,#047857);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:white;box-shadow:0 6px 20px rgba(16,185,129,0.3);">2</div>
+        <div style="background:white;border-radius:16px;padding:2rem;flex:1;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+                <i class="fas fa-users" style="color:#10b981;font-size:1.2rem;"></i>
+                <h3 style="margin:0;font-size:1.25rem;font-weight:800;color:#1f2937;">Add Your Employees</h3>
+            </div>
+            <p style="margin:0;color:#6b7280;line-height:1.8;">From the Admin Dashboard, go to <strong>Employees &rarr; Add Employee</strong>. Fill in their name, department, designation, and shift. Each employee gets their own login to access their personal dashboard, payslips, and leave requests.</p>
+            <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:0.6rem;">
+                <span style="background:rgba(16,185,129,0.1);color:#047857;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Individual Profiles</span>
+                <span style="background:rgba(16,185,129,0.1);color:#047857;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Departments & Roles</span>
+                <span style="background:rgba(16,185,129,0.1);color:#047857;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Bulk Import</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;">
+        <div style="flex-shrink:0;width:60px;height:60px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:white;box-shadow:0 6px 20px rgba(59,130,246,0.3);">3</div>
+        <div style="background:white;border-radius:16px;padding:2rem;flex:1;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+                <i class="fas fa-clock" style="color:#3b82f6;font-size:1.2rem;"></i>
+                <h3 style="margin:0;font-size:1.25rem;font-weight:800;color:#1f2937;">Track Attendance Daily</h3>
+            </div>
+            <p style="margin:0;color:#6b7280;line-height:1.8;">Employees check in and out from their dashboard. Admins can view the full attendance list, edit records, approve regularization requests, and see who is present, absent, or on leave — all in real time.</p>
+            <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:0.6rem;">
+                <span style="background:rgba(59,130,246,0.1);color:#1d4ed8;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Check In / Out</span>
+                <span style="background:rgba(59,130,246,0.1);color:#1d4ed8;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Regularization</span>
+                <span style="background:rgba(59,130,246,0.1);color:#1d4ed8;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Calendar View</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;">
+        <div style="flex-shrink:0;width:60px;height:60px;background:linear-gradient(135deg,#f59e0b,#b45309);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:white;box-shadow:0 6px 20px rgba(245,158,11,0.3);">4</div>
+        <div style="background:white;border-radius:16px;padding:2rem;flex:1;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+                <i class="fas fa-calendar-alt" style="color:#f59e0b;font-size:1.2rem;"></i>
+                <h3 style="margin:0;font-size:1.25rem;font-weight:800;color:#1f2937;">Manage Leaves</h3>
+            </div>
+            <p style="margin:0;color:#6b7280;line-height:1.8;">Employees apply for leaves directly from their dashboard. Admins receive instant notifications and can approve or reject with one click. Leave balances update automatically and sync with payroll.</p>
+            <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:0.6rem;">
+                <span style="background:rgba(245,158,11,0.1);color:#b45309;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Apply & Approve</span>
+                <span style="background:rgba(245,158,11,0.1);color:#b45309;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Leave Balances</span>
+                <span style="background:rgba(245,158,11,0.1);color:#b45309;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Leave Types</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;">
+        <div style="flex-shrink:0;width:60px;height:60px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:white;box-shadow:0 6px 20px rgba(139,92,246,0.3);">5</div>
+        <div style="background:white;border-radius:16px;padding:2rem;flex:1;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+                <i class="fas fa-money-bill-wave" style="color:#8b5cf6;font-size:1.2rem;"></i>
+                <h3 style="margin:0;font-size:1.25rem;font-weight:800;color:#1f2937;">Process Payroll</h3>
+            </div>
+            <p style="margin:0;color:#6b7280;line-height:1.8;">Navigate to <strong>Payroll</strong> in the admin panel. ZetTrak automatically calculates gross pay, deductions, and net salary based on attendance and leave data. Generate payslips that employees can download anytime.</p>
+            <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:0.6rem;">
+                <span style="background:rgba(139,92,246,0.1);color:#6d28d9;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Auto Calculation</span>
+                <span style="background:rgba(139,92,246,0.1);color:#6d28d9;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Payslip Download</span>
+                <span style="background:rgba(139,92,246,0.1);color:#6d28d9;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Deductions & Bonuses</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;">
+        <div style="flex-shrink:0;width:60px;height:60px;background:linear-gradient(135deg,#06b6d4,#0e7490);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:white;box-shadow:0 6px 20px rgba(6,182,212,0.3);">6</div>
+        <div style="background:white;border-radius:16px;padding:2rem;flex:1;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+                <i class="fas fa-chart-bar" style="color:#06b6d4;font-size:1.2rem;"></i>
+                <h3 style="margin:0;font-size:1.25rem;font-weight:800;color:#1f2937;">Generate Reports & Send Announcements</h3>
+            </div>
+            <p style="margin:0;color:#6b7280;line-height:1.8;">Use the <strong>Reports</strong> section to export attendance, payroll, leave, and department summaries. Keep your team informed with the <strong>Announcements</strong> feature — broadcast messages to all employees instantly.</p>
+            <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:0.6rem;">
+                <span style="background:rgba(6,182,212,0.1);color:#0e7490;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Export Reports</span>
+                <span style="background:rgba(6,182,212,0.1);color:#0e7490;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Announcements</span>
+                <span style="background:rgba(6,182,212,0.1);color:#0e7490;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">Notifications</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- CTA -->
+<div style="background:#f8fafc;padding:4rem 5%;text-align:center;border-top:1px solid #e5e7eb;">
+    <h2 style="font-size:2rem;font-weight:800;color:#1f2937;margin:0 0 0.75rem;">Ready to take control of your HR?</h2>
+    <p style="color:#6b7280;font-size:1rem;margin:0 0 2rem;">Join hundreds of companies already using ZetTrak.</p>
+    <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <a href="{% url 'signup' %}" style="background:#86bc25;color:white;padding:0.9rem 2.2rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:1rem;box-shadow:0 6px 20px rgba(134,188,37,0.3);">
+            <i class="fas fa-rocket" style="margin-right:0.5rem;"></i>Get Started Free
+        </a>
+        <a href="{% url 'contact' %}" style="background:white;color:#1f2937;padding:0.9rem 2.2rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:1rem;border:2px solid #e5e7eb;">
+            <i class="fas fa-headset" style="margin-right:0.5rem;color:#86bc25;"></i>Talk to Us
+        </a>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% block admin_content %}
+
+<div style="margin-bottom:2rem; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">Send New Announcement</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Broadcast important messages and holiday notices to all employees</p>
+    </div>
+    <a href="{% url 'admin_notifications' %}" style="text-decoration:none; background:#f3f4f6; color:#1f2937; padding:0.6rem 1rem; border-radius:10px; font-weight:700; font-size:0.85rem;">&larr; Back to Dashboard</a>
+</div>
+
+<div style="background:white; padding:2rem; border-radius:24px; box-shadow:0 10px 40px rgba(0,0,0,0.04); max-width:800px; margin:0 auto; border:1px solid #f3f4f6;">
+    <form method="POST">
+        {% csrf_token %}
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:0.5rem; color:#374151;">Announcement Title</label>
+            <input type="text" name="title" required placeholder="e.g. Holiday Notice: Holi Festival" style="width:100%; padding:1rem; border:1.5px solid #e5e7eb; border-radius:12px; font-weight:600;">
+        </div>
+        
+        <div style="margin-bottom:2rem;">
+            <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:0.5rem; color:#374151;">Announcement Message</label>
+            <textarea name="message" rows="6" required placeholder="Type your announcement content here..." style="width:100%; padding:1rem; border:1.5px solid #e5e7eb; border-radius:12px; font-weight:600; font-family:inherit;"></textarea>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:1.5rem;">
+            <div style="display:flex; gap:0.5rem; align-items:center; color:#6b7280; font-size:0.85rem;">
+                <span style="font-size:1.1rem;">&#128276;</span> Notifications will be sent to all active employees instantly.
+            </div>
+            <button type="submit" style="background:#86bc25; color:white; padding:1rem 3rem; border:none; border-radius:14px; font-weight:800; cursor:pointer; font-size:1rem; box-shadow:0 8px 20px rgba(134, 188, 37, 0.3);">Broadcast Announcement</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

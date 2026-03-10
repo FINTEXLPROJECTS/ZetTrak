@@ -1,0 +1,26 @@
+{% extends 'zettrack_app/base.html' %}
+
+{% block content %}
+<section class="contact-section">
+    <div class="contact-grid" style="display: block; max-width: 500px; margin: 0 auto;">
+        <div class="contact-form-container">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Employee Profile Setup</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div style="color: #991b1b; font-size: 0.8rem; margin-top: 0.25rem;">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="submit-btn">Complete Setup</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% block admin_content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">My Profile</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Manage your account and company information</p>
+    </div>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div style="padding:0.875rem 1rem; border-radius:10px; margin-bottom:1.25rem; font-size:0.85rem; font-weight:600;
+    {% if message.tags == 'success' %}background:#d1fae5; color:#065f46; border:1px solid #6ee7b7;
+    {% else %}background:#fee2e2; color:#991b1b; border:1px solid #fca5a5;{% endif %}">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- Personal Info -->
+<div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1.75rem; margin-bottom:1.5rem;">
+    <div style="font-size:1rem; font-weight:800; color:#1f2937; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid #f3f4f6;">
+        &#128100; Personal Information
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">First Name</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+        </div>
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Last Name</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+        </div>
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Email</label>
+            <input type="email" value="{{ user.email }}" disabled
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; background:#f9fafb; color:#9ca3af; box-sizing:border-box;">
+        </div>
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Phone</label>
+            <input type="text" name="phone" value="{{ user.phone|default:'' }}"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+        </div>
+    </div>
+</div>
+
+<!-- Change Password -->
+<div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1.75rem; margin-bottom:1.5rem;">
+    <div style="font-size:1rem; font-weight:800; color:#1f2937; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid #f3f4f6;">
+        &#128274; Change Password
+    </div>
+    <div style="max-width:400px;">
+        <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">New Password <span style="color:#9ca3af; font-weight:400;">(leave blank to keep current)</span></label>
+        <input type="password" name="new_password" placeholder="Enter new password"
+            style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+    </div>
+</div>
+
+<!-- Company Info -->
+<div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1.75rem; margin-bottom:1.5rem;">
+    <div style="font-size:1rem; font-weight:800; color:#1f2937; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid #f3f4f6;">
+        &#127970; Company Information
+    </div>
+
+    <!-- Company Logo Upload -->
+    <div style="margin-bottom:1.25rem;">
+        <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.6rem;">Company Logo</label>
+        <div style="display:flex; align-items:center; gap:1.25rem;">
+            <div id="logo-preview-wrap">
+                {% if company.logo %}
+                    <img id="logo-preview" src="{{ company.logo.url }}" alt="Logo"
+                        style="width:64px; height:64px; border-radius:10px; object-fit:cover; border:2px solid #86bc25;">
+                {% else %}
+                    <div id="logo-initials" style="width:64px; height:64px; background:#86bc25; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.6rem; color:#1a1f2e;">
+                        {{ company.name|first|upper }}
+                    </div>
+                    <img id="logo-preview" src="" alt="Logo"
+                        style="width:64px; height:64px; border-radius:10px; object-fit:cover; border:2px solid #86bc25; display:none;">
+                {% endif %}
+            </div>
+            <div>
+                <label for="company_logo" style="display:inline-block; background:#f3f4f6; color:#374151; padding:0.5rem 1rem; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; border:1px solid #e5e7eb;">
+                    &#128247; Choose Logo
+                </label>
+                <input type="file" id="company_logo" name="company_logo" accept="image/*" style="display:none;"
+                    onchange="previewLogo(this)">
+                <p style="margin:0.4rem 0 0; font-size:0.75rem; color:#9ca3af;">PNG, JPG or GIF. Recommended: 200×200px</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Company Name</label>
+            <input type="text" name="company_name" value="{{ company.name }}"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+        </div>
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Industry</label>
+            <input type="text" name="industry" value="{{ company.industry }}"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+        </div>
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">State</label>
+            <select name="state"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none; background:white;">
+                {% for code, name in states %}
+                    <option value="{{ code }}" {% if company.state == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">City</label>
+            <input type="text" name="city" value="{{ company.city }}"
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; outline:none;">
+        </div>
+    </div>
+</div>
+
+<div style="display:flex; gap:0.75rem;">
+    <button type="submit" style="background:#86bc25; color:white; padding:0.7rem 1.75rem; border:none; border-radius:10px; font-weight:700; font-size:0.875rem; cursor:pointer;">
+        Save Changes
+    </button>
+</div>
+
+</form>
+
+<script>
+function previewLogo(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var img = document.getElementById('logo-preview');
+            var initials = document.getElementById('logo-initials');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            if (initials) initials.style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}

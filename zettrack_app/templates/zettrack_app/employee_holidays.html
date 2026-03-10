@@ -1,0 +1,103 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container">
+
+        <!-- Page Header -->
+        <div style="margin-bottom: 2rem;">
+            <h1 class="emp-page-title">Public Holidays</h1>
+            <p class="emp-page-subtitle">Official holidays for {{ today.year }}</p>
+        </div>
+
+        {% if holidays %}
+
+        <!-- Stats row -->
+        <div class="emp-grid" style="margin-bottom: 1.5rem;">
+            <div class="emp-card" style="text-align: center;">
+                <div class="emp-stat-value">{{ holidays|length }}</div>
+                <div class="emp-stat-label">Total Holidays</div>
+            </div>
+            <div class="emp-card" style="text-align: center;">
+                {% with upcoming=holidays|length %}
+                <div class="emp-stat-value" id="upcoming-count">—</div>
+                {% endwith %}
+                <div class="emp-stat-label">Upcoming</div>
+            </div>
+            <div class="emp-card" style="text-align: center;">
+                <div class="emp-stat-value" id="past-count">—</div>
+                <div class="emp-stat-label">Past</div>
+            </div>
+        </div>
+
+        <!-- Holiday List -->
+        <div class="emp-card">
+            <h4 class="emp-card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.1rem;">&#127881;</span> Holiday Calendar
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 0;">
+                {% for holiday in holidays %}
+                <div class="holiday-row" data-date="{{ holiday.date|date:'Y-m-d' }}"
+                     style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #86bc25, #6a961d); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; color: white;">
+                            <div style="font-size: 0.65rem; font-weight: 700; line-height: 1; text-transform: uppercase;">{{ holiday.date|date:"M" }}</div>
+                            <div style="font-size: 1.1rem; font-weight: 800; line-height: 1.2;">{{ holiday.date|date:"d" }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.95rem; font-weight: 700; color: #1f2937;">{{ holiday.name }}</div>
+                            <div style="font-size: 0.78rem; color: #6b7280; margin-top: 0.1rem;">
+                                {{ holiday.date|date:"l, d F Y" }}
+                                {% if holiday.description %}&nbsp;&bull;&nbsp;{{ holiday.description }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <span class="holiday-badge emp-badge emp-badge-green">Upcoming</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% else %}
+        <div class="emp-card" style="text-align: center; padding: 3rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">&#127881;</div>
+            <p style="color: #6b7280; font-size: 0.95rem;">No public holidays have been added yet. Please check back later.</p>
+        </div>
+        {% endif %}
+
+        <p style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'employee_dashboard' %}" class="emp-link-muted">&larr; Back to Dashboard</a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    var today = new Date("{{ today|date:'Y-m-d' }}");
+    today.setHours(0, 0, 0, 0);
+    var upcoming = 0, past = 0;
+
+    document.querySelectorAll('.holiday-row').forEach(function (row) {
+        var d = new Date(row.dataset.date);
+        d.setHours(0, 0, 0, 0);
+        var badge = row.querySelector('.holiday-badge');
+        if (d < today) {
+            past++;
+            badge.textContent = 'Past';
+            badge.className = 'holiday-badge emp-badge emp-badge-gray';
+            row.style.opacity = '0.55';
+        } else if (d.getTime() === today.getTime()) {
+            upcoming++;
+            badge.textContent = 'Today';
+            badge.className = 'holiday-badge emp-badge emp-badge-yellow';
+        } else {
+            upcoming++;
+        }
+    });
+
+    document.getElementById('upcoming-count').textContent = upcoming;
+    document.getElementById('past-count').textContent = past;
+}());
+</script>
+{% endblock %}

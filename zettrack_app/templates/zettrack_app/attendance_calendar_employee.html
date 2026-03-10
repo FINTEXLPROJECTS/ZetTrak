@@ -1,0 +1,115 @@
+{% extends 'zettrack_app/employee_base.html' %}
+{% load tz %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container">
+
+        <!-- Page Header -->
+        <div class="emp-page-header">
+            <div>
+                <h1 class="emp-page-title">My Attendance</h1>
+                <p class="emp-page-subtitle">Track your daily punch records</p>
+            </div>
+            <a href="{% url 'regularization_request' %}" class="emp-btn">+ Request Correction</a>
+        </div>
+
+        <!-- Today's Punch Card -->
+        <div class="emp-card" style="margin-bottom: 1.5rem; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h4 class="emp-card-title" style="margin: 0;">Today's Attendance</h4>
+                <span class="emp-clock" id="current-time">--:--:--</span>
+            </div>
+
+            <div class="emp-punch-row">
+                <div class="emp-punch-col">
+                    <form method="POST" action="{% url 'punch_in' %}" style="width: 100%;">
+                        {% csrf_token %}
+                        <button type="submit" class="emp-btn emp-btn-full" {% if attendance.punch_in %}disabled{% endif %}>
+                            &#9654; Punch In
+                        </button>
+                    </form>
+                    <span class="emp-punch-time">
+                        {% if attendance.punch_in %}
+                            <span style="color: #065f46; font-weight: 700;">In: {{ attendance.punch_in|localtime|date:"h:i A" }}</span>
+                        {% else %}
+                            Not yet
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="emp-punch-col">
+                    <form method="POST" action="{% url 'punch_out' %}" style="width: 100%;">
+                        {% csrf_token %}
+                        <button type="submit" class="emp-btn emp-btn-red emp-btn-full" {% if not attendance.punch_in or attendance.punch_out %}disabled{% endif %}>
+                            &#9646; Punch Out
+                        </button>
+                    </form>
+                    <span class="emp-punch-time">
+                        {% if attendance.punch_out %}
+                            <span style="color: #991b1b; font-weight: 700;">Out: {{ attendance.punch_out|localtime|date:"h:i A" }}</span>
+                        {% else %}
+                            --:--
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <hr class="emp-punch-divider">
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 0;">
+                Missed a punch?
+                <a href="{% url 'my_regularizations' %}" class="emp-link">Request Regularization &rarr;</a>
+            </p>
+        </div>
+
+        <!-- Attendance History -->
+        <div class="emp-card">
+            <h4 class="emp-card-title">Attendance History</h4>
+            <table class="emp-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Punch In</th>
+                        <th>Punch Out</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for att in attendances %}
+                    <tr>
+                        <td class="emp-td-bold">{{ att.date|date:"D, M d, Y" }}</td>
+                        <td>{{ att.punch_in|localtime|date:"h:i A"|default:"&mdash;" }}</td>
+                        <td>{{ att.punch_out|localtime|date:"h:i A"|default:"&mdash;" }}</td>
+                        <td>
+                            <span class="emp-badge {% if att.status == 'P' %}emp-badge-green{% elif att.status == 'A' %}emp-badge-red{% else %}emp-badge-gray{% endif %}">
+                                {% if att.status == 'P' %}Present{% elif att.status == 'A' %}Absent{% else %}{{ att.status }}{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'regularization_request' %}" class="emp-link">Regularize &rarr;</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="emp-empty"><td colspan="5">No attendance records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'employee_dashboard' %}" class="emp-link-muted">&larr; Back to Dashboard</a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('current-time').innerText = now.toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+{% endblock %}

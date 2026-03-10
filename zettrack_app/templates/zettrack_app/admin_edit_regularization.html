@@ -1,0 +1,102 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% block admin_content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">Edit Regularization Request</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">
+            {{ reg.user.get_full_name }} &mdash; Applied on {{ reg.applied_on|date:"M d, Y" }}
+        </p>
+    </div>
+    <a href="{% url 'regularization_list_admin' %}" style="font-size:0.85rem; font-weight:600; color:#6b7280; text-decoration:none;">
+        &larr; Back to Requests
+    </a>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div style="padding:0.875rem 1rem; border-radius:10px; margin-bottom:1.25rem; font-size:0.85rem; font-weight:600;
+    {% if message.tags == 'success' %}background:#d1fae5; color:#065f46; border:1px solid #6ee7b7;
+    {% else %}background:#fee2e2; color:#991b1b; border:1px solid #fca5a5;{% endif %}">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1.75rem;">
+
+    <!-- Employee Info -->
+    <div style="background:#f8fafc; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:flex; gap:2rem; flex-wrap:wrap;">
+        <div>
+            <div style="font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; margin-bottom:0.2rem;">Employee</div>
+            <div style="font-weight:700; color:#1f2937;">{{ reg.user.get_full_name }}</div>
+            <div style="font-size:0.8rem; color:#6b7280;">{{ reg.user.email }}</div>
+        </div>
+        {% if reg.user.employee_profile.employee_code %}
+        <div>
+            <div style="font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; margin-bottom:0.2rem;">Employee ID</div>
+            <div style="font-weight:700; color:#1f2937;">{{ reg.user.employee_profile.employee_code }}</div>
+        </div>
+        {% endif %}
+        <div>
+            <div style="font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; margin-bottom:0.2rem;">Current Status</div>
+            <span style="padding:0.25rem 0.75rem; border-radius:50px; font-size:0.8rem; font-weight:700;
+                {% if reg.status == 'approved' %}background:#d1fae5; color:#065f46;
+                {% elif reg.status == 'rejected' %}background:#fee2e2; color:#991b1b;
+                {% else %}background:#fef3c7; color:#92400e;{% endif %}">
+                {{ reg.get_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+
+            <div>
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Attendance Date</label>
+                <input type="date" name="attendance_date" value="{{ reg.attendance_date|date:'Y-m-d' }}" required
+                    style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Status</label>
+                <select name="status" style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box;">
+                    <option value="pending" {% if reg.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if reg.status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="rejected" {% if reg.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+
+            <div>
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Expected Punch In</label>
+                <input type="time" name="expected_punch_in" value="{{ reg.expected_punch_in|time:'H:i'|default:'' }}"
+                    style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Expected Punch Out</label>
+                <input type="time" name="expected_punch_out" value="{{ reg.expected_punch_out|time:'H:i'|default:'' }}"
+                    style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box;">
+            </div>
+
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">Reason</label>
+            <textarea name="reason" rows="3" required
+                style="width:100%; padding:0.65rem 0.9rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.875rem; box-sizing:border-box; resize:vertical;">{{ reg.reason }}</textarea>
+        </div>
+
+        <div style="display:flex; gap:0.75rem;">
+            <button type="submit" style="background:#86bc25; color:white; padding:0.7rem 1.75rem; border:none; border-radius:10px; font-weight:700; font-size:0.875rem; cursor:pointer;">
+                Save Changes
+            </button>
+            <a href="{% url 'regularization_list_admin' %}" style="background:transparent; color:#6b7280; border:1.5px solid #d1d5db; padding:0.7rem 1.4rem; border-radius:10px; font-weight:700; font-size:0.875rem; text-decoration:none; display:inline-flex; align-items:center;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

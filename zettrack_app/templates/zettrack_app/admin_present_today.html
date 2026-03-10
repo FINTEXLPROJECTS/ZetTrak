@@ -1,0 +1,105 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% block admin_content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">Present Today</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Employees who have checked in</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" style="font-size:0.82rem; color:#6b7280; text-decoration:none; display:flex; align-items:center; gap:0.4rem;">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Date Filter -->
+<div style="background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1rem 1.25rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem;">
+    <label style="font-size:0.82rem; font-weight:700; color:#374151;">Filter by Date:</label>
+    <form method="GET" style="display:flex; align-items:center; gap:0.75rem;">
+        <input type="date" name="date" value="{{ selected_date }}"
+            style="padding:0.45rem 0.75rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; outline:none;">
+        <button type="submit"
+            style="background:#10b981; color:white; padding:0.45rem 1rem; border:none; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer;">
+            Apply
+        </button>
+    </form>
+    <span style="margin-left:auto; font-size:0.82rem; color:#6b7280;">
+        Showing: <strong style="color:#1f2937;">{{ selected_date }}</strong>
+    </span>
+</div>
+
+<!-- Summary Card -->
+<div style="background:linear-gradient(135deg,#10b981,#059669); border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem; color:white;">
+    <div style="width:48px; height:48px; background:rgba(255,255,255,0.15); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">
+        <i class="fas fa-user-check"></i>
+    </div>
+    <div>
+        <div style="font-size:2rem; font-weight:900; line-height:1;">{{ records|length }}</div>
+        <div style="font-size:0.82rem; opacity:0.85; margin-top:0.1rem;">Employee{{ records|length|pluralize }} checked in on {{ selected_date }}</div>
+    </div>
+</div>
+
+<!-- Table -->
+{% if records %}
+<div style="background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+    <table style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr style="background:#f9fafb; border-bottom:2px solid #e5e7eb;">
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">#</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Employee</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Department</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Check In</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Check Out</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Work Hours</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rec in records %}
+            <tr style="border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background=''">
+                <td style="padding:0.9rem 1.25rem; font-size:0.85rem; color:#9ca3af; font-weight:600;">{{ forloop.counter }}</td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#10b981,#059669); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.85rem; flex-shrink:0;">
+                            {{ rec.user.first_name|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-size:0.875rem; font-weight:700; color:#1f2937;">{{ rec.user.get_full_name }}</div>
+                            <div style="font-size:0.75rem; color:#9ca3af;">
+                                {% if rec.user.employee_profile.employee_code %}{{ rec.user.employee_profile.employee_code }}{% else %}{{ rec.user.email }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.85rem; color:#374151;">
+                    {% if rec.user.employee_profile.department %}
+                        {{ rec.user.employee_profile.department.name }}
+                    {% else %}—{% endif %}
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; font-weight:700; color:#10b981;">
+                    {{ rec.punch_in|time:"h:i A" }}
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; font-weight:600;">
+                    {% if rec.punch_out %}{{ rec.punch_out|time:"h:i A" }}{% else %}<span style="color:#9ca3af;">Still in</span>{% endif %}
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; font-weight:600;">
+                    {% if rec.work_hours %}{{ rec.work_hours }}{% else %}<span style="color:#9ca3af;">—</span>{% endif %}
+                </td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <span style="background:#d1fae5; color:#065f46; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.78rem; font-weight:700;">
+                        {% if rec.status == 'P' %}Present{% elif rec.status == 'HD' %}Half Day{% else %}{{ rec.status }}{% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div style="background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:3rem; text-align:center;">
+    <div style="font-size:3rem; margin-bottom:1rem;">&#128680;</div>
+    <div style="font-size:1rem; font-weight:700; color:#1f2937; margin-bottom:0.4rem;">No Check-ins Yet</div>
+    <div style="font-size:0.85rem; color:#6b7280;">No employees have punched in on {{ selected_date }}.</div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container">
+
+        <!-- Page Header -->
+        <div style="margin-bottom: 2rem;">
+            <h1 class="emp-page-title">My Profile</h1>
+            <p class="emp-page-subtitle">Your personal and employment details</p>
+        </div>
+
+        <!-- Avatar + Name Banner -->
+        <div class="emp-card" style="display: flex; align-items: center; gap: 1.75rem; margin-bottom: 1.5rem;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #86bc25, #6a961d); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: white; flex-shrink: 0;">
+                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+            </div>
+            <div>
+                <div style="font-size: 1.35rem; font-weight: 800; color: #1f2937;">{{ user.get_full_name|default:user.email }}</div>
+                <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.2rem;">
+                    {% if profile.designation %}{{ profile.designation.name }}{% else %}Employee{% endif %}
+                    {% if profile.department %} &bull; {{ profile.department.name }}{% endif %}
+                </div>
+                {% if profile.employee_code %}
+                <div style="margin-top: 0.5rem;">
+                    <span class="emp-badge emp-badge-blue">ID: {{ profile.employee_code }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="emp-grid-2" style="gap: 1.5rem;">
+
+            <!-- Personal Information -->
+            <div class="emp-card">
+                <h4 class="emp-card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.1rem;">&#128100;</span> Personal Information
+                </h4>
+
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Full Name</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ user.get_full_name|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Email</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ user.email }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Phone</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ user.phone|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Date of Birth</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ profile.dob|date:"d M Y"|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Aadhaar (last 4)</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">
+                            {% if profile.aadhaar_last_4 %}XXXX-XXXX-{{ profile.aadhaar_last_4 }}{% else %}&mdash;{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Information -->
+            <div class="emp-card">
+                <h4 class="emp-card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.1rem;">&#128188;</span> Employment Details
+                </h4>
+
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Employee ID</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ profile.employee_code|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Department</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ profile.department.name|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Designation</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ profile.designation.name|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Branch</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ profile.branch.name|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Shift</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">
+                            {% if profile.shift %}{{ profile.shift.name }} ({{ profile.shift.start_time|time:"H:i" }} &ndash; {{ profile.shift.end_time|time:"H:i" }}){% else %}&mdash;{% endif %}
+                        </span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Joining Date</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ profile.joining_date|date:"d M Y"|default:"&mdash;" }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;">Role</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">
+                            <span class="emp-badge emp-badge-green">{{ profile.role|default:"Employee" }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Company Info -->
+        {% if user.company %}
+        <div class="emp-card" style="margin-top: 1.5rem;">
+            <h4 class="emp-card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.1rem;">&#127970;</span> Company
+            </h4>
+            <div style="display: flex; gap: 3rem; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.25rem;">Company Name</div>
+                    <div style="font-weight: 700; color: #1f2937;">{{ user.company.name }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.25rem;">Industry</div>
+                    <div style="font-weight: 700; color: #1f2937;">{{ user.company.industry|default:"&mdash;" }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.25rem;">Location</div>
+                    <div style="font-weight: 700; color: #1f2937;">{{ user.company.city }}, {{ user.company.state }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not profile %}
+        <div class="emp-card" style="margin-top: 1.5rem; text-align: center; padding: 3rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">&#128100;</div>
+            <p style="color: #6b7280; font-size: 0.95rem;">Your detailed profile has not been set up yet. Please contact your HR or admin.</p>
+        </div>
+        {% endif %}
+
+        <!-- Public Holidays -->
+        <div class="emp-card" style="margin-top: 1.5rem;">
+            <h4 class="emp-card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.1rem;">&#127881;</span> Public Holidays
+            </h4>
+            {% if holidays %}
+            <div style="display: flex; flex-direction: column; gap: 0;">
+                {% for holiday in holidays %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ holiday.name }}</div>
+                        {% if holiday.description %}
+                        <div style="font-size: 0.78rem; color: #6b7280; margin-top: 0.15rem;">{{ holiday.description }}</div>
+                        {% endif %}
+                    </div>
+                    <span class="emp-badge emp-badge-green">{{ holiday.date|date:"d M Y" }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #6b7280; font-size: 0.9rem; text-align: center; padding: 1.5rem 0;">No public holidays have been added yet.</p>
+            {% endif %}
+        </div>
+
+        <p style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'employee_dashboard' %}" class="emp-link-muted">&larr; Back to Dashboard</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

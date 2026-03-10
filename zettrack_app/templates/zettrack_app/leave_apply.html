@@ -1,0 +1,52 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container-sm">
+
+        <!-- Page Header -->
+        <div style="margin-bottom: 2rem;">
+            <h1 class="emp-page-title">Apply Leave</h1>
+            <p class="emp-page-subtitle">Submit a new leave request for approval</p>
+        </div>
+
+        <div class="emp-card">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="emp-form-group">
+                    <label class="emp-label">Leave Type</label>
+                    <select name="leave_type" class="emp-select" required>
+                        <option value="">Select leave type...</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Paid Leave">Paid Leave</option>
+                    </select>
+                </div>
+
+                <div class="emp-form-row">
+                    <div class="emp-form-group">
+                        <label class="emp-label">Start Date</label>
+                        <input type="date" name="start_date" class="emp-input" required>
+                    </div>
+                    <div class="emp-form-group">
+                        <label class="emp-label">End Date</label>
+                        <input type="date" name="end_date" class="emp-input" required>
+                    </div>
+                </div>
+
+                <div class="emp-form-group">
+                    <label class="emp-label">Reason</label>
+                    <textarea name="reason" class="emp-textarea" rows="4" required placeholder="Briefly describe the reason for your leave..."></textarea>
+                </div>
+
+                <div class="emp-form-actions">
+                    <button type="submit" class="emp-btn emp-btn-full">Submit Request</button>
+                    <a href="{% url 'employee_dashboard' %}" class="emp-btn-outline emp-btn-full">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

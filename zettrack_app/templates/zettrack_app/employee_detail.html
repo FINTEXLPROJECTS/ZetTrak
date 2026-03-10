@@ -1,0 +1,230 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+
+<div style="margin-bottom: 1.5rem;">
+    <a href="{% url 'employee_list' %}" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; color: #6b7280; text-decoration: none;">&larr; Back to Employees</a>
+</div>
+
+<!-- Profile Card -->
+<div class="detail-card">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="avatar-lg">
+                {{ employee.first_name|first|upper }}{{ employee.last_name|first|upper }}
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 1.4rem; font-weight: 800; color: #1f2937;">{{ employee.get_full_name }}</h2>
+                <p style="margin: 0.3rem 0 0.6rem; color: #6b7280; font-size: 0.9rem;">
+                    {{ employee.employee_profile.designation.name|default:"No Designation" }}
+                    <span style="margin: 0 0.4rem; color: #d1d5db;">|</span>
+                    <span style="font-family: monospace; background: #f3f4f6; padding: 0.1rem 0.5rem; border-radius: 5px; font-size: 0.82rem; color: #6b7280;">{{ employee.employee_profile.employee_code }}</span>
+                </p>
+                <span class="role-badge">{{ employee.employee_profile.role }}</span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <a href="{% url 'edit_employee' employee.id %}" class="hdr-btn hdr-btn-blue">&#9998; Edit Profile</a>
+            <a href="#" class="hdr-btn hdr-btn-red">&#10005; Deactivate</a>
+        </div>
+    </div>
+
+    <!-- Inner Tabs -->
+    <div class="inner-tabs">
+        <button onclick="showTab('overview')" id="tab-overview" class="itab itab-active">Overview</button>
+        <button onclick="showTab('attendance')" id="tab-attendance" class="itab">Attendance</button>
+        <button onclick="showTab('leave')" id="tab-leave" class="itab">Leave</button>
+        <button onclick="showTab('payroll')" id="tab-payroll" class="itab">Payroll</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="content-overview" class="tab-content" style="padding: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+
+            <!-- Personal Info -->
+            <div class="info-section">
+                <div class="info-section-title">Personal Information</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Mobile</div>
+                        <div class="info-value">{{ employee.phone|default:"-" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value" style="word-break: break-all;">{{ employee.email|default:"-" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Date of Birth</div>
+                        <div class="info-value">{{ employee.employee_profile.dob|default:"-" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Aadhaar</div>
+                        <div class="info-value">**** **** {{ employee.employee_profile.aadhaar_last_4|default:"-" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Info -->
+            <div class="info-section">
+                <div class="info-section-title">Employment Details</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Joining Date</div>
+                        <div class="info-value">{{ employee.employee_profile.joining_date|default:"-" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Department</div>
+                        <div class="info-value">{{ employee.employee_profile.department.name|default:"-" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Branch</div>
+                        <div class="info-value">{{ employee.employee_profile.branch.name|default:"-" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Shift</div>
+                        <div class="info-value">{{ employee.employee_profile.shift.name|default:"-" }}</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Other Tabs Placeholder -->
+    <div id="content-attendance" class="tab-content tab-placeholder" style="display:none;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128337;</div>
+        <div style="font-weight: 700; color: #374151;">Attendance</div>
+        <div>Attendance summary and calendar will appear here.</div>
+    </div>
+    <div id="content-leave" class="tab-content tab-placeholder" style="display:none;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128197;</div>
+        <div style="font-weight: 700; color: #374151;">Leave</div>
+        <div>Leave balance and history will appear here.</div>
+    </div>
+    <div id="content-payroll" class="tab-content tab-placeholder" style="display:none;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128181;</div>
+        <div style="font-weight: 700; color: #374151;">Payroll</div>
+        <div>Salary structure and payslips will appear here.</div>
+    </div>
+
+</div>
+
+<style>
+    .emp-tab {
+        padding: 0.875rem 0;
+        color: #6b7280;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+    }
+    .emp-tab:hover { color: #374151; }
+
+    .detail-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        overflow: hidden;
+        max-width: 1020px;
+        margin: 0 auto;
+    }
+
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2rem 2.5rem;
+        border-bottom: 1px solid #f3f4f6;
+        background: linear-gradient(135deg, #fafffe 0%, #f0fdf4 100%);
+    }
+
+    .avatar-lg {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #86bc25, #6a9e1a);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 800; font-size: 1.6rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(134,188,37,0.35);
+    }
+
+    .role-badge {
+        display: inline-block;
+        background: #dcfce7; color: #16a34a;
+        padding: 0.25rem 0.8rem;
+        border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+    }
+
+    .hdr-btn {
+        display: inline-block; text-decoration: none;
+        padding: 0.55rem 1.1rem; border-radius: 10px;
+        font-size: 0.85rem; font-weight: 700;
+        transition: opacity 0.2s;
+    }
+    .hdr-btn:hover { opacity: 0.85; }
+    .hdr-btn-blue { background: #eff6ff; color: #2563eb; }
+    .hdr-btn-red { background: #fef2f2; color: #dc2626; }
+
+    .inner-tabs {
+        display: flex; gap: 0;
+        border-bottom: 2px solid #f3f4f6;
+        padding: 0 2.5rem;
+    }
+    .itab {
+        background: none; border: none;
+        padding: 1rem 1.25rem;
+        font-size: 0.88rem; font-weight: 600; color: #6b7280;
+        cursor: pointer; border-bottom: 2px solid transparent;
+        margin-bottom: -2px; transition: color 0.2s;
+    }
+    .itab:hover { color: #374151; }
+    .itab-active {
+        color: #86bc25 !important;
+        font-weight: 700;
+        border-bottom-color: #86bc25 !important;
+    }
+
+    .info-section {
+        background: #f9fafb;
+        border-radius: 14px;
+        padding: 1.5rem;
+        border: 1px solid #f3f4f6;
+    }
+    .info-section-title {
+        font-size: 0.72rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.07em;
+        color: #86bc25; margin-bottom: 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e8f5d0;
+    }
+    .info-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    }
+    .info-item {}
+    .info-label {
+        font-size: 0.75rem; color: #9ca3af; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        margin-bottom: 0.2rem;
+    }
+    .info-value {
+        font-size: 0.9rem; color: #1f2937; font-weight: 600;
+    }
+
+    .tab-placeholder {
+        padding: 3rem; text-align: center; color: #9ca3af; font-size: 0.9rem;
+    }
+</style>
+
+<script>
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.itab').forEach(btn => btn.classList.remove('itab-active'));
+        document.getElementById('content-' + tabName).style.display = 'block';
+        document.getElementById('tab-' + tabName).classList.add('itab-active');
+    }
+</script>
+
+{% endblock %}

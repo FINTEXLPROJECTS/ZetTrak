@@ -1,0 +1,492 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% load custom_filters %}
+{% block admin_content %}
+
+<!-- Page Header -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">Attendance</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Track employee check-in / check-out</p>
+    </div>
+</div>
+
+<!-- Global Filters -->
+<div style="background:white; padding:1.25rem 1.5rem; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:1.5rem; border:1px solid #f3f4f6;">
+    <form method="GET" style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+        <!-- Preserve active tab -->
+        <input type="hidden" name="tab" id="active-tab-input" value="{{ request.GET.tab|default:'daily' }}">
+        
+        <!-- Employee Selector -->
+        <div style="flex:1; min-width:220px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; margin-bottom:0.4rem;">Employee</label>
+            <select name="employee_id" onchange="this.form.submit()"
+                    style="width:100%; padding:0.6rem 0.9rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem; outline:none; appearance:none; background:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E')%20no-repeat%20right%200.75rem%20center/0.65rem%20auto; background-color:white;">
+                <option value="">All Employees</option>
+                {% for emp in all_employees %}
+                <option value="{{ emp.id }}" {% if selected_employee_id == emp.id|stringformat:'s' %}selected{% endif %}>
+                    {{ emp.get_full_name }}{% if emp.employee_profile.employee_code %} ({{ emp.employee_profile.employee_code }}){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Month Selector -->
+        <div style="width:140px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; margin-bottom:0.4rem;">Month</label>
+            <select name="month" onchange="this.form.submit()"
+                    style="width:100%; padding:0.6rem 0.9rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem; outline:none; appearance:none; background:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E')%20no-repeat%20right%200.75rem%20center/0.65rem%20auto; background-color:white;">
+                {% for m_num, m_name in month_choices %}
+                <option value="{{ m_num }}" {% if month == m_num %}selected{% endif %}>{{ m_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Year Selector -->
+        <div style="width:110px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; margin-bottom:0.4rem;">Year</label>
+            <select name="year" onchange="this.form.submit()"
+                    style="width:100%; padding:0.6rem 0.9rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem; outline:none; appearance:none; background:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E')%20no-repeat%20right%200.75rem%20center/0.65rem%20auto; background-color:white;">
+                <option value="2023" {% if year|stringformat:"s" == "2023" %}selected{% endif %}>2023</option>
+                <option value="2024" {% if year|stringformat:"s" == "2024" %}selected{% endif %}>2024</option>
+                <option value="2025" {% if year|stringformat:"s" == "2025" %}selected{% endif %}>2025</option>
+                <option value="2026" {% if year|stringformat:"s" == "2026" %}selected{% endif %}>2026</option>
+            </select>
+        </div>
+
+        <div style="flex-grow:1; display:flex; justify-content:flex-end; align-items:flex-end; align-self:stretch; padding-bottom:2px;">
+            <div style="font-size:1.1rem; font-weight:800; color:#1f2937;">{{ month_name }} {{ year }}</div>
+        </div>
+    </form>
+</div>
+
+<!-- Module Tabs -->
+<div class="att-tabs">
+    <button class="att-tab att-tab-active" onclick="switchTab('daily', this)">&#128337; Daily Attendance</button>
+    <button class="att-tab" onclick="switchTab('monthly', this)">&#128197; Monthly Attendance</button>
+    <button class="att-tab" onclick="switchTab('reports', this)">&#128202; Attendance Reports</button>
+</div>
+
+<!-- ===== DAILY TAB ===== -->
+<div id="tab-daily" class="att-panel">
+
+    <!-- Controls (Consolidated daily-specific info) -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <div style="font-weight:700; color:#1f2937; font-size:1rem;">{{ selected_date|date:"l, d F Y" }}</div>
+            <div style="font-size:0.82rem; color:#6b7280;">{{ total_employees }} employee{{ total_employees|pluralize }}</div>
+        </div>
+        <form method="GET" style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+            <input type="hidden" name="tab" value="daily">
+            <input type="hidden" name="employee_id" value="{{ selected_employee_id }}">
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+            <input type="date" name="date" value="{{ selected_date|date:'Y-m-d' }}" onchange="this.form.submit()"
+                   style="padding:0.55rem 0.9rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem; outline:none; cursor:pointer;">
+        </form>
+    </div>
+
+    <!-- Summary pills -->
+    <div style="display:flex; gap:0.75rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+        <div style="background:#dcfce7; color:#16a34a; padding:0.4rem 1rem; border-radius:50px; font-size:0.8rem; font-weight:700;">
+            &#10003; Present: {{ present_today }}
+        </div>
+        <div style="background:#fef9c3; color:#a16207; padding:0.4rem 1rem; border-radius:50px; font-size:0.8rem; font-weight:700;">
+            &#9719; Total: {{ total_employees }}
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+        <table class="att-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Work Hours</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in attendance_data %}
+                <tr class="att-row">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:0.65rem;">
+                            <div class="att-avatar">{{ item.employee.first_name|first|upper }}</div>
+                            <div>
+                                <div style="font-weight:700; color:#1f2937; font-size:0.875rem;">{{ item.employee.get_full_name }}</div>
+                                <div style="font-size:0.75rem; color:#9ca3af;">{{ item.employee.employee_profile.employee_code|default:"-" }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if item.attendance.punch_in %}
+                            <span style="font-weight:600; color:#1f2937;">{{ item.attendance.punch_in|date:"H:i" }}</span>
+                        {% else %}<span style="color:#d1d5db;">—</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if item.attendance.punch_out %}
+                            <span style="font-weight:600; color:#1f2937;">{{ item.attendance.punch_out|date:"H:i" }}</span>
+                        {% else %}<span style="color:#d1d5db;">—</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if item.work_hours %}
+                            <span style="font-weight:600; color:#059669;">{{ item.work_hours }}</span>
+                        {% else %}<span style="color:#d1d5db;">—</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if item.attendance %}
+                            {% if item.attendance.status == 'P' %}
+                                <span class="st-badge st-present">Present</span>
+                            {% elif item.attendance.status == 'HD' %}
+                                <span class="st-badge st-halfday">Half Day</span>
+                            {% elif item.attendance.status == 'L' %}
+                                <span class="st-badge st-leave">Leave</span>
+                            {% elif item.attendance.status == 'H' %}
+                                <span class="st-badge st-holiday">Holiday</span>
+                            {% elif item.attendance.status == 'WO' %}
+                                <span class="st-badge st-weekoff">Week Off</span>
+                            {% else %}
+                                <span class="st-badge st-absent">Absent</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="st-badge st-absent">Absent</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="att-action-btn"
+                            onclick="openMarkModal('{{ item.employee.id }}', '{{ item.employee.get_full_name }}', '{{ selected_date|date:'Y-m-d' }}',
+                                '{{ item.attendance.punch_in|date:'H:i'|default:'' }}',
+                                '{{ item.attendance.punch_out|date:'H:i'|default:'' }}',
+                                '{{ item.attendance.status|default:'P' }}')">
+                            {% if item.attendance %}&#9998; Edit{% else %}&#43; Mark{% endif %}
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding:3rem; text-align:center; color:#9ca3af;">
+                        <div style="font-size:2rem; margin-bottom:0.5rem;">&#128101;</div>
+                        <div style="font-weight:600;">No employees found</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== MONTHLY TAB ===== -->
+<div id="tab-monthly" class="att-panel" style="display:none;">
+
+    <!-- Calendar Grid (Only show if specific employee selected) -->
+    {% if selected_employee_id %}
+    <div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden; margin-bottom:1.5rem;">
+        <div class="cal-header">
+            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+        </div>
+        {% for week in calendar_weeks %}
+        <div class="cal-week">
+            {% for day in week %}
+            {% if day == 0 %}
+            <div class="cal-day cal-empty"></div>
+            {% else %}
+                {% with status=day_stats|get_item:day %}
+                <a href="?date={{ year }}-{{ month|stringformat:"02d" }}-{{ day|stringformat:"02d" }}&tab=daily"
+                   class="cal-day {% if day == today.day and month == today.month and year == today.year %}cal-today{% endif %}"
+                   style="{% if status == 'PRESENT' %}background-color:#dcfce7 !important; color:#16a34a !important;{% elif status == 'ABSENT' %}background-color:#fee2e2 !important; color:#dc2626 !important;{% elif status == 'WO' %}background-color:#eff6ff !important; color:#2563eb !important;{% endif %}">
+                    <div class="cal-day-num" style="{% if status == 'PRESENT' %}color:#16a34a;{% elif status == 'ABSENT' %}color:#dc2626;{% elif status == 'WO' %}color:#2563eb;{% endif %}">{{ day }}</div>
+                </a>
+                {% endwith %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Monthly summary -->
+    <div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem; border-bottom:1px solid #f3f4f6; font-weight:700; color:#1f2937; font-size:0.9rem;">
+            Attendance Summary — {{ month_name }} {{ year }}
+        </div>
+        <table class="att-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Present</th>
+                    <th>Half Day</th>
+                    <th>On Leave</th>
+                    <th>Absent</th>
+                    <th>Total Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in emp_report %}
+                <tr class="att-row">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:0.65rem;">
+                            <div class="att-avatar">{{ row.employee.first_name|first|upper }}</div>
+                            <div style="font-weight:700; color:#1f2937; font-size:0.875rem;">{{ row.employee.get_full_name }}</div>
+                        </div>
+                    </td>
+                    <td><span class="st-badge st-present">{{ row.present }}</span></td>
+                    <td><span class="st-badge st-halfday">{{ row.half_day }}</span></td>
+                    <td><span class="st-badge st-leave">{{ row.on_leave }}</span></td>
+                    <td><span class="st-badge st-absent">{{ row.absent }}</span></td>
+                    <td><span style="font-weight:600; color:#059669;">{{ row.total_hours }}</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" style="padding:2rem; text-align:center; color:#9ca3af;">No data found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== REPORTS TAB ===== -->
+<div id="tab-reports" class="att-panel" style="display:none;">
+
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <a href="{% url 'export_attendance_excel' %}?month={{ month }}&year={{ year }}" style="display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none; padding:0.65rem 1.25rem; background:#10b981; color:white; border-radius:10px; font-size:0.85rem; font-weight:700;">
+            &#8659; Download Excel
+        </a>
+        <a href="{% url 'export_attendance_pdf' %}?month={{ month }}&year={{ year }}" style="display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none; padding:0.65rem 1.25rem; background:#ef4444; color:white; border-radius:10px; font-size:0.85rem; font-weight:700;">
+            &#8659; Download PDF
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div class="report-card" style="border-left:4px solid #86bc25;">
+            <div class="report-card-label">Total Employees</div>
+            <div class="report-card-value">{{ total_employees }}</div>
+        </div>
+        <div class="report-card" style="border-left:4px solid #10b981;">
+            <div class="report-card-label">Present Today</div>
+            <div class="report-card-value">{{ present_today }}</div>
+        </div>
+        <div class="report-card" style="border-left:4px solid #f59e0b;">
+            <div class="report-card-label">Month</div>
+            <div class="report-card-value">{{ month_name }}</div>
+        </div>
+        <div class="report-card" style="border-left:4px solid #6366f1;">
+            <div class="report-card-label">Year</div>
+            <div class="report-card-value">{{ year }}</div>
+        </div>
+    </div>
+
+    <!-- Report Table -->
+    <div style="background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem; border-bottom:1px solid #f3f4f6; font-weight:700; color:#1f2937; font-size:0.9rem;">
+            Monthly Report — {{ month_name }} {{ year }}
+        </div>
+        <table class="att-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Emp ID</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Half Day</th>
+                    <th>Leave</th>
+                    <th>Work Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in emp_report %}
+                <tr class="att-row">
+                    <td>
+                        <div style="font-weight:700; color:#1f2937;">{{ row.employee.get_full_name }}</div>
+                        <div style="font-size:0.75rem; color:#9ca3af;">{{ row.employee.email }}</div>
+                    </td>
+                    <td><span style="font-family:monospace; background:#f3f4f6; padding:0.15rem 0.4rem; border-radius:5px; font-size:0.82rem; color:#6b7280;">{{ row.employee.employee_profile.employee_code|default:"-" }}</span></td>
+                    <td style="color:#16a34a; font-weight:700;">{{ row.present }}</td>
+                    <td style="color:#dc2626; font-weight:700;">{{ row.absent }}</td>
+                    <td style="color:#d97706; font-weight:700;">{{ row.half_day }}</td>
+                    <td style="color:#6366f1; font-weight:700;">{{ row.on_leave }}</td>
+                    <td style="color:#059669; font-weight:700;">{{ row.total_hours }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" style="padding:2rem; text-align:center; color:#9ca3af;">No data found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== MARK ATTENDANCE MODAL ===== -->
+<div id="mark-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:20px; padding:2rem; width:420px; max-width:95%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <div>
+                <div style="font-weight:800; color:#1f2937; font-size:1rem;">Mark Attendance</div>
+                <div id="modal-emp-name" style="font-size:0.82rem; color:#6b7280; margin-top:0.2rem;"></div>
+            </div>
+            <button onclick="closeMarkModal()" style="background:none; border:none; font-size:1.3rem; color:#9ca3af; cursor:pointer;">&#10005;</button>
+        </div>
+        <form method="POST" action="{% url 'mark_attendance' %}">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" id="modal-user-id">
+            <input type="hidden" name="att_date" id="modal-date">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                    <label style="font-size:0.78rem; font-weight:700; color:#374151; display:block; margin-bottom:0.3rem;">Check-In</label>
+                    <input type="time" name="punch_in" id="modal-punch-in"
+                           style="width:100%; padding:0.65rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem; box-sizing:border-box;">
+                </div>
+                <div>
+                    <label style="font-size:0.78rem; font-weight:700; color:#374151; display:block; margin-bottom:0.3rem;">Check-Out</label>
+                    <input type="time" name="punch_out" id="modal-punch-out"
+                           style="width:100%; padding:0.65rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem; box-sizing:border-box;">
+                </div>
+            </div>
+            <div style="margin-bottom:1.5rem;">
+                <label style="font-size:0.78rem; font-weight:700; color:#374151; display:block; margin-bottom:0.3rem;">Status</label>
+                <select name="status" id="modal-status"
+                        style="width:100%; padding:0.65rem; border:1.5px solid #e5e7eb; border-radius:10px; font-size:0.875rem;">
+                    <option value="P">Present</option>
+                    <option value="HD">Half Day</option>
+                    <option value="A">Absent</option>
+                    <option value="L">Leave</option>
+                    <option value="H">Holiday</option>
+                    <option value="WO">Week Off</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:0.75rem;">
+                <button type="submit" style="flex:1; padding:0.75rem; background:linear-gradient(135deg,#86bc25,#6a9e1a); color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Save</button>
+                <button type="button" onclick="closeMarkModal()" style="flex:1; padding:0.75rem; background:#f3f4f6; color:#6b7280; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .att-tabs {
+        display: flex; gap: 0.25rem;
+        background: white; padding: 0.4rem;
+        border-radius: 14px; margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        width: fit-content;
+    }
+    .att-tab {
+        padding: 0.6rem 1.25rem; border: none; border-radius: 10px;
+        font-size: 0.85rem; font-weight: 600; color: #6b7280;
+        cursor: pointer; background: transparent; transition: all 0.2s;
+    }
+    .att-tab:hover { color: #111827; background: #86bc25; }
+    .att-tab-active { background: #86bc25 !important; color: #111827 !important; font-weight: 700; }
+
+    .att-panel {}
+
+    .att-table { width:100%; border-collapse:collapse; }
+    .att-table thead tr { background:#f8fafc; border-bottom:1px solid #e5e7eb; }
+    .att-table th {
+        padding:0.85rem 1.25rem; text-align:left;
+        font-size:0.72rem; font-weight:700; text-transform:uppercase;
+        letter-spacing:0.06em; color:#6b7280;
+    }
+    .att-table td { padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; vertical-align:middle; }
+    .att-row { border-bottom:1px solid #f3f4f6; transition:background 0.15s; }
+    .att-row:last-child { border-bottom:none; }
+    .att-row:hover { background:#fafff5; }
+
+    .att-avatar {
+        width:34px; height:34px; border-radius:50%;
+        background:linear-gradient(135deg,#86bc25,#6a9e1a);
+        display:flex; align-items:center; justify-content:center;
+        color:white; font-weight:700; font-size:0.82rem; flex-shrink:0;
+    }
+
+    .st-badge { display:inline-block; padding:0.25rem 0.7rem; border-radius:50px; font-size:0.75rem; font-weight:700; }
+    .st-present { background:#dcfce7; color:#16a34a; }
+    .st-absent  { background:#fee2e2; color:#dc2626; }
+    .st-halfday { background:#fef9c3; color:#a16207; }
+    .st-leave   { background:#ede9fe; color:#6d28d9; }
+    .st-holiday { background:#e0f2fe; color:#0369a1; }
+    .st-weekoff { background:#f3f4f6; color:#6b7280; }
+
+    .att-action-btn {
+        padding:0.35rem 0.9rem; border:none; border-radius:8px;
+        background:#f0fdf4; color:#16a34a; font-size:0.8rem;
+        font-weight:700; cursor:pointer; transition:opacity 0.2s;
+    }
+    .att-action-btn:hover { opacity:0.8; }
+
+    /* Calendar */
+    .cal-header {
+        display:grid; grid-template-columns:repeat(7,1fr);
+        background:#f8fafc; border-bottom:1px solid #e5e7eb;
+    }
+    .cal-header div {
+        padding:0.6rem; text-align:center;
+        font-size:0.72rem; font-weight:700; text-transform:uppercase;
+        letter-spacing:0.05em; color:#6b7280;
+    }
+    .cal-week { display:grid; grid-template-columns:repeat(7,1fr); }
+    .cal-day {
+        min-height:72px; padding:0.5rem; border:1px solid #f3f4f6;
+        text-decoration:none; display:block; transition:background 0.15s;
+    }
+    .cal-day:hover { background:#f0fdf4; }
+    .cal-empty { background:#fafafa; }
+    .cal-today { background:#f0fdf4; border: 2px solid #86bc25; }
+    .cal-day-num { font-size:0.82rem; font-weight:700; color:#374151; margin-bottom:0.3rem; }
+    .cal-today .cal-day-num {
+        background:#86bc25; color:white; width:22px; height:22px;
+        border-radius:50%; display:flex; align-items:center; justify-content:center;
+    }
+    .cal-dot-row { display:flex; gap:3px; flex-wrap:wrap; }
+    .cal-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+    .cal-dot-green { background:#86bc25; }
+    .cal-dot-red { background:#ef4444; }
+
+    /* Report cards */
+    .report-card {
+        background:white; border-radius:14px; padding:1.25rem 1.5rem;
+        box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    }
+    .report-card-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6b7280; margin-bottom:0.4rem; }
+    .report-card-value { font-size:1.6rem; font-weight:800; color:#1f2937; }
+</style>
+
+<script>
+    function switchTab(name, btn) {
+        document.querySelectorAll('.att-panel').forEach(p => p.style.display = 'none');
+        document.querySelectorAll('.att-tab').forEach(b => b.classList.remove('att-tab-active'));
+        document.getElementById('tab-' + name).style.display = 'block';
+        btn.classList.add('att-tab-active');
+        
+        // Update hidden input in global filters so tab is preserved on submit
+        const activeTabInput = document.getElementById('active-tab-input');
+        if (activeTabInput) {
+            activeTabInput.value = name;
+        }
+    }
+
+    function openMarkModal(userId, name, dateStr, punchIn, punchOut, status) {
+        document.getElementById('modal-user-id').value = userId;
+        document.getElementById('modal-emp-name').textContent = name + ' — ' + dateStr;
+        document.getElementById('modal-date').value = dateStr;
+        document.getElementById('modal-punch-in').value = punchIn;
+        document.getElementById('modal-punch-out').value = punchOut;
+        document.getElementById('modal-status').value = status;
+        const modal = document.getElementById('mark-modal');
+        modal.style.display = 'flex';
+    }
+
+    function closeMarkModal() {
+        document.getElementById('mark-modal').style.display = 'none';
+    }
+
+    // Restore tab from URL param
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+    if (activeTab) {
+        const btn = document.querySelector(`.att-tab[onclick*="${activeTab}"]`);
+        if (btn) switchTab(activeTab, btn);
+    }
+</script>
+
+{% endblock %}

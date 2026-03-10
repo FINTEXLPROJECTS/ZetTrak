@@ -1,0 +1,50 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container">
+
+        <!-- Page Header -->
+        <div class="emp-page-header">
+            <div>
+                <h1 class="emp-page-title">My Payslips</h1>
+                <p class="emp-page-subtitle">Download your monthly salary statements</p>
+            </div>
+        </div>
+
+        <div class="emp-card">
+            <table class="emp-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Net Salary</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payroll in payrolls %}
+                    <tr>
+                        <td class="emp-td-bold">{{ payroll.month|date:"F Y" }}</td>
+                        <td style="font-weight: 600;">&#8377;{{ payroll.net_salary }}</td>
+                        <td>
+                            <span class="emp-badge emp-badge-green">{{ payroll.status }}</span>
+                        </td>
+                        <td>
+                            <a href="#" class="emp-link">Download &darr;</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="emp-empty"><td colspan="4">No payslips generated yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'employee_dashboard' %}" class="emp-link-muted">&larr; Back to Dashboard</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

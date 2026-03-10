@@ -1,0 +1,45 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+    <h2 style="margin-bottom: 2rem;">Attendance Regularization Requests</h2>
+
+    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid #eee;">
+                    <th style="padding: 1rem;">Employee</th>
+                    <th style="padding: 1rem;">Date</th>
+                    <th style="padding: 1rem;">Requested Timings</th>
+                    <th style="padding: 1rem;">Reason</th>
+                    <th style="padding: 1rem;">Status</th>
+                    <th style="padding: 1rem;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr style="border-bottom: 1px solid #f9fafb;">
+                    <td style="padding: 1rem;"><strong>{{ req.user.get_full_name }}</strong></td>
+                    <td style="padding: 1rem;">{{ req.attendance_date }}</td>
+                    <td style="padding: 1rem;">
+                        <small>In: {{ req.expected_punch_in|default:"-" }}</small><br>
+                        <small>Out: {{ req.expected_punch_out|default:"-" }}</small>
+                    </td>
+                    <td style="padding: 1rem;">{{ req.reason }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; {% if req.status == 'approved' %}background: #d1fae5; color: #065f46;{% elif req.status == 'rejected' %}background: #fee2e2; color: #991b1b;{% else %}background: #fef3c7; color: #92400e;{% endif %}">
+                            {{ req.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <a href="{% url 'admin_edit_regularization' req.id %}" style="color: #2563eb; font-weight: 700; text-decoration: none;">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: #6b7280;">No pending requests.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

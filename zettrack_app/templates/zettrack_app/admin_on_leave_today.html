@@ -1,0 +1,134 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% block admin_content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">On Leave Today</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Employees on approved leave</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" style="font-size:0.82rem; color:#6b7280; text-decoration:none; display:flex; align-items:center; gap:0.4rem;">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Date Filter -->
+<div style="background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1rem 1.25rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem;">
+    <label style="font-size:0.82rem; font-weight:700; color:#374151;">Filter by Date:</label>
+    <form method="GET" style="display:flex; align-items:center; gap:0.75rem;">
+        <input type="date" name="date" value="{{ selected_date }}"
+            style="padding:0.45rem 0.75rem; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; outline:none;">
+        <button type="submit"
+            style="background:#3b82f6; color:white; padding:0.45rem 1rem; border:none; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer;">
+            Apply
+        </button>
+    </form>
+    <span style="margin-left:auto; font-size:0.82rem; color:#6b7280;">
+        Showing: <strong style="color:#1f2937;">{{ selected_date }}</strong>
+    </span>
+</div>
+
+<!-- Summary Card -->
+<div style="background:linear-gradient(135deg,#3b82f6,#2563eb); border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem; color:white;">
+    <div style="width:48px; height:48px; background:rgba(255,255,255,0.15); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">
+        <i class="fas fa-umbrella-beach"></i>
+    </div>
+    <div>
+        <div style="font-size:2rem; font-weight:900; line-height:1;">{{ total_on_leave }}</div>
+        <div style="font-size:0.82rem; opacity:0.85; margin-top:0.1rem;">Employees on leave on {{ selected_date }}</div>
+    </div>
+</div>
+
+<!-- Table -->
+{% if leave_requests or manual_leave_attendances %}
+<div style="background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+    <table style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr style="background:#f9fafb; border-bottom:2px solid #e5e7eb;">
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">#</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Employee</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Department</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Leave Type</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">From</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">To</th>
+                <th style="padding:0.9rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lr in leave_requests %}
+            <tr style="border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">
+                <td style="padding:0.9rem 1.25rem; font-size:0.85rem; color:#9ca3af; font-weight:600;">{{ forloop.counter }}</td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#2563eb); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.85rem; flex-shrink:0;">
+                            {{ lr.user.first_name|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-size:0.875rem; font-weight:700; color:#1f2937;">{{ lr.user.get_full_name }}</div>
+                            <div style="font-size:0.75rem; color:#9ca3af;">
+                                {% if lr.user.employee_profile.employee_code %}{{ lr.user.employee_profile.employee_code }}{% else %}{{ lr.user.email }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.85rem; color:#374151;">
+                    {% if lr.user.employee_profile.department %}{{ lr.user.employee_profile.department.name }}{% else %}—{% endif %}
+                </td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <span style="background:#dbeafe; color:#1d4ed8; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.78rem; font-weight:600;">
+                        {{ lr.leave_type }}
+                    </span>
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; font-weight:600;">{{ lr.start_date|date:"d M Y" }}</td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; font-weight:600;">{{ lr.end_date|date:"d M Y" }}</td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <span style="background:#dbeafe; color:#1d4ed8; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.78rem; font-weight:700;">
+                        Approved
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for att in manual_leave_attendances %}
+            <tr style="border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">
+                <td style="padding:0.9rem 1.25rem; font-size:0.85rem; color:#9ca3af; font-weight:600;">{{ leave_requests|length|add:forloop.counter }}</td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#10b981,#059669); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.85rem; flex-shrink:0;">
+                            {{ att.user.first_name|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-size:0.875rem; font-weight:700; color:#1f2937;">{{ att.user.get_full_name }}</div>
+                            <div style="font-size:0.75rem; color:#9ca3af;">
+                                {% if att.user.employee_profile.employee_code %}{{ att.user.employee_profile.employee_code }}{% else %}{{ att.user.email }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.85rem; color:#374151;">
+                    {% if att.user.employee_profile.department %}{{ att.user.employee_profile.department.name }}{% else %}—{% endif %}
+                </td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <span style="background:#d1fae5; color:#065f46; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.78rem; font-weight:600;">
+                        Leave
+                    </span>
+                </td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; font-weight:600;">{{ att.date|date:"d M Y" }}</td>
+                <td style="padding:0.9rem 1.25rem; font-size:0.875rem; color:#374151; font-weight:600;">{{ att.date|date:"d M Y" }}</td>
+                <td style="padding:0.9rem 1.25rem;">
+                    <span style="background:#d1fae5; color:#065f46; padding:0.25rem 0.65rem; border-radius:20px; font-size:0.78rem; font-weight:700;">
+                        Marked
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div style="background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:3rem; text-align:center;">
+    <div style="font-size:3rem; margin-bottom:1rem;">&#127774;</div>
+    <div style="font-size:1rem; font-weight:700; color:#1f2937; margin-bottom:0.4rem;">No Leaves Today</div>
+    <div style="font-size:0.85rem; color:#6b7280;">No employees are on leave on {{ selected_date }}.</div>
+</div>
+{% endif %}
+
+{% endblock %}

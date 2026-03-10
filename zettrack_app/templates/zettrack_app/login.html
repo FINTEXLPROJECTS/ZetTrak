@@ -1,0 +1,161 @@
+{% extends 'zettrack_app/base.html' %}
+
+{% block content %}
+<section class="contact-section" style="background: #f8fafc; min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    
+    <div id="login-selection" style="display: flex; gap: 2rem; max-width: 900px; width: 100%; justify-content: center;">
+        <!-- Employee Login Card -->
+        <div onclick="showLoginForm('employee')" style="background: white; padding: 2.5rem; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; cursor: pointer; transition: 0.3s; flex: 1; text-align: center; max-width: 400px;">
+            <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">&#128101;</div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: #1f2937; margin-bottom: 1rem;">Employee Login</h2>
+            <p style="color: #6b7280; line-height: 1.6; font-size: 0.95rem;">Login with your ID and mobile number to manage your attendance.</p>
+            <button class="submit-btn" style="margin-top: 1.5rem; pointer-events: none;">Access Account</button>
+        </div>
+
+        <!-- Admin Login Card -->
+        <div onclick="showLoginForm('admin')" style="background: white; padding: 2.5rem; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; cursor: pointer; transition: 0.3s; flex: 1; text-align: center; max-width: 400px;">
+            <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">&#128188;</div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: #1f2937; margin-bottom: 1rem;">Admin / HR Login</h2>
+            <p style="color: #6b7280; line-height: 1.6; font-size: 0.95rem;">Login with email and password to manage your organization.</p>
+            <button class="submit-btn" style="margin-top: 1.5rem; pointer-events: none; background-color: #1f2937;">Access Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Login Form (Hidden initially) -->
+    <div id="login-form-container" style="display: none; max-width: 500px; width: 100%;" class="contact-form-container">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="#" onclick="showSelection(); return false;" style="color: #6b7280; text-decoration: none; font-weight: 600; font-size: 0.9rem;">&larr; Back to selection</a>
+        </div>
+        <h2 id="login-title" style="text-align: center; margin-bottom: 2rem; font-weight: 800;">Login</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="login_type" id="login_type_input" value="admin">
+            
+            <!-- Admin Fields -->
+            <div id="admin-fields">
+                <div class="form-group">
+                    <label>Work Email</label>
+                    <input type="email" name="username" placeholder="e.g. admin@company.com" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" class="form-input">
+                </div>
+            </div>
+
+            <!-- Employee Fields -->
+            <div id="employee-fields" style="display: none;">
+                <div class="form-group">
+                    <label>Employee ID</label>
+                    <input type="text" name="employee_id" placeholder="e.g. EMP101" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="text" name="phone" placeholder="e.g. 9876543210" class="form-input">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="button" onclick="showSelection()" class="submit-btn" style="background-color: #f3f4f6; color: #4b5563; flex: 1;">Back</button>
+                <button type="submit" class="submit-btn" id="submit-button" style="flex: 2;">Login Now</button>
+            </div>
+        </form>
+        
+        <p id="signup-link" style="text-align: center; margin-top: 1.5rem;">
+            New organization? <a href="{% url 'signup' %}" style="color: var(--primary-color); font-weight: 700;">Create company account</a>
+        </p>
+    </div>
+
+</section>
+
+<style>
+    #login-selection > div {
+        transition: all 0.3s ease;
+    }
+    #login-selection > div:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(134, 188, 37, 0.3);
+        border-color: #86bc25;
+        background-color: #86bc25 !important;
+    }
+    #login-selection > div:hover h2,
+    #login-selection > div:hover p {
+        color: #000000 !important;
+    }
+    #login-selection > div:hover .submit-btn {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+    .form-input {
+        width: 100%;
+        padding: 1rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 12px;
+        background: #f9fafb;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: 0.3s;
+        box-sizing: border-box;
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(134, 188, 37, 0.1);
+    }
+</style>
+
+<script>
+    function showLoginForm(type) {
+        document.getElementById('login-selection').style.display = 'none';
+        document.getElementById('login-form-container').style.display = 'block';
+        
+        const title = document.getElementById('login-title');
+        const submitBtn = document.getElementById('submit-button');
+        const signupLink = document.getElementById('signup-link');
+        const loginTypeInput = document.getElementById('login_type_input');
+        const adminFields = document.getElementById('admin-fields');
+        const employeeFields = document.getElementById('employee-fields');
+
+        loginTypeInput.value = type;
+
+        if (type === 'admin') {
+            title.innerText = 'Admin / HR Login';
+            submitBtn.style.backgroundColor = '#1f2937';
+            signupLink.style.display = 'block';
+            adminFields.style.display = 'block';
+            employeeFields.style.display = 'none';
+            // Enable admin fields, disable employee fields
+            adminFields.querySelectorAll('input').forEach(i => i.disabled = false);
+            employeeFields.querySelectorAll('input').forEach(i => i.disabled = true);
+        } else {
+            title.innerText = 'Employee Login';
+            submitBtn.style.backgroundColor = 'var(--primary-color)';
+            signupLink.style.display = 'none';
+            adminFields.style.display = 'none';
+            employeeFields.style.display = 'block';
+            // Enable employee fields, disable admin fields
+            adminFields.querySelectorAll('input').forEach(i => i.disabled = true);
+            employeeFields.querySelectorAll('input').forEach(i => i.disabled = false);
+        }
+    }
+
+    function showSelection() {
+        document.getElementById('login-selection').style.display = 'flex';
+        document.getElementById('login-form-container').style.display = 'none';
+        // Reset any disabled fields when going back
+        document.querySelectorAll('#login-form-container input').forEach(i => i.disabled = false);
+    }
+</script>
+{% endblock %}

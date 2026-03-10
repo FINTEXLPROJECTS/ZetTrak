@@ -1,0 +1,156 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: #1f2937;">Departments</h2>
+        <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #6b7280;">Manage your company departments</p>
+    </div>
+</div>
+
+<!-- Top Navigation Tabs -->
+<div class="dept-tabs">
+    <a href="{% url 'department_list' %}" class="dept-tab" style="text-decoration:none;">&#127970; Department List</a>
+    <a href="{% url 'add_department' %}" class="dept-tab" style="text-decoration:none;">&#10133; Add Department</a>
+    <a href="{% url 'department_employees' %}" class="dept-tab" style="text-decoration:none;">&#128101; Department Employees</a>
+    <a href="{% url 'department_reports' %}" class="dept-tab dept-tab-active" style="text-decoration:none;">&#128202; Department Reports</a>
+</div>
+
+<!-- Sub Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+    <h3 style="margin:0; font-size:1.05rem; font-weight:700; color:#374151;">Department-wise Report &mdash; {{ month_name }}</h3>
+</div>
+
+{% if report_data %}
+<!-- Summary Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    {% for item in report_data %}
+    <div style="background: white; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 4px solid #86bc25;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #86bc25, #6a9e1a); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1rem;">
+                {{ item.department.name|first|upper }}
+            </div>
+            <div style="font-weight: 700; color: #1f2937; font-size: 0.95rem;">{{ item.department.name }}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #6b7280; margin-bottom: 0.5rem;">
+            <span>Employees</span>
+            <span style="font-weight: 700; color: #1f2937;">{{ item.employee_count }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #6b7280; margin-bottom: 0.75rem;">
+            <span>Attendance Rate</span>
+            <span style="font-weight: 700; color: {% if item.attendance_rate >= 80 %}#16a34a{% elif item.attendance_rate >= 60 %}#d97706{% else %}#dc2626{% endif %};">
+                {{ item.attendance_rate }}%
+            </span>
+        </div>
+        <!-- Progress bar -->
+        <div style="background: #f3f4f6; border-radius: 50px; height: 6px; overflow: hidden;">
+            <div style="height: 100%; border-radius: 50px; width: {{ item.attendance_rate }}%;
+                background: {% if item.attendance_rate >= 80 %}#86bc25{% elif item.attendance_rate >= 60 %}#f59e0b{% else %}#ef4444{% endif %};
+                transition: width 0.4s;">
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Table Card -->
+<div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden;">
+    <table class="dept-table">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Total Employees</th>
+                <th>Present Days (This Month)</th>
+                <th>Attendance Rate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in report_data %}
+            <tr class="dept-row">
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #86bc25, #6a9e1a); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;">
+                            {{ item.department.name|first|upper }}
+                        </div>
+                        <span style="font-weight: 700; color: #1f2937;">{{ item.department.name }}</span>
+                    </div>
+                </td>
+                <td>
+                    <span style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700;">
+                        {{ item.employee_count }}
+                    </span>
+                </td>
+                <td style="font-weight: 600; color: #374151;">{{ item.present_days }}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="background: #f3f4f6; border-radius: 50px; height: 8px; width: 80px; overflow: hidden; flex-shrink: 0;">
+                            <div style="height: 100%; border-radius: 50px; width: {{ item.attendance_rate }}%;
+                                background: {% if item.attendance_rate >= 80 %}#86bc25{% elif item.attendance_rate >= 60 %}#f59e0b{% else %}#ef4444{% endif %};">
+                            </div>
+                        </div>
+                        <span style="font-weight: 700; font-size: 0.85rem; color: {% if item.attendance_rate >= 80 %}#16a34a{% elif item.attendance_rate >= 60 %}#d97706{% else %}#dc2626{% endif %};">
+                            {{ item.attendance_rate }}%
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <a href="{% url 'department_employees' %}?dept={{ item.department.id }}" class="action-btn action-view">View Employees</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 3rem; text-align: center; color: #9ca3af;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128202;</div>
+                    <div style="font-weight: 600;">No department data available</div>
+                    <div style="font-size: 0.85rem; margin-top: 0.25rem;">
+                        <a href="{% url 'add_department' %}" style="color: #86bc25; font-weight: 700;">Add departments</a> to see reports.
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .dept-tabs {
+        display: flex; gap: 0.5rem; padding: 0.4rem; background: white;
+        border-radius: 14px; margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        width: fit-content; flex-wrap: wrap;
+    }
+    .dept-tab {
+        padding: 0.6rem 1.1rem; border: none; border-radius: 10px;
+        font-size: 0.8rem; font-weight: 600; color: #6b7280;
+        cursor: pointer; background: transparent; transition: all 0.2s;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dept-tab:hover { color: #111827; background: #86bc25; }
+    .dept-tab-active { background: #86bc25 !important; color: #111827 !important; font-weight: 700; }
+
+    .dept-table { width: 100%; border-collapse: collapse; }
+    .dept-table thead tr { background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
+    .dept-table th {
+        padding: 0.9rem 1.25rem; text-align: left;
+        font-size: 0.72rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280;
+    }
+    .dept-table td { padding: 1rem 1.25rem; font-size: 0.875rem; color: #374151; vertical-align: middle; }
+    .dept-row { border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
+    .dept-row:last-child { border-bottom: none; }
+    .dept-row:hover { background: #fafff5; }
+
+    .action-btn {
+        display: inline-block; padding: 0.35rem 0.8rem;
+        border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+        text-decoration: none; transition: opacity 0.2s;
+    }
+    .action-btn:hover { opacity: 0.8; }
+    .action-view { background: #f0fdf4; color: #16a34a; }
+</style>
+
+{% endblock %}

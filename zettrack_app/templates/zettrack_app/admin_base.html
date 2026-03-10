@@ -1,0 +1,157 @@
+{% extends 'zettrack_app/base.html' %}
+
+{% block content %}
+<div style="display: flex; min-height: 100vh;">
+
+    <!-- Admin Sidebar -->
+    <div style="width: 260px; background: #1a1f2e; color: white; padding: 1.5rem 0; flex-shrink: 0; display: flex; flex-direction: column;">
+        <div style="padding: 1.5rem; border-bottom: 1px solid #2d3748; display: flex; align-items: center; gap: 1rem;">
+            {% if request.user.company.logo %}
+                <img src="{{ request.user.company.logo.url }}" alt="Logo" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; border: 1.5px solid #86bc25;">
+            {% else %}
+                <div style="width: 45px; height: 45px; background: #86bc25; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; color: #1a1f2e;">
+                    {{ request.user.company.name|first|upper }}
+                </div>
+            {% endif %}
+            <div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #86bc25; line-height: 1.1; text-transform: uppercase; letter-spacing: 0.5px; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ request.user.company.name }}</div>
+            </div>
+        </div>
+
+        <nav style="flex: 1; padding: 1rem 0; overflow-y: auto;">
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0;">
+
+                <!-- 1. Dashboard -->
+                <li>
+                    <a href="{% url 'admin_dashboard' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if request.resolver_match.url_name == 'admin_dashboard' %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if request.resolver_match.url_name == 'admin_dashboard' %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if request.resolver_match.url_name == 'admin_dashboard' %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-th-large" style="width: 20px;"></i> Dashboard
+                    </a>
+                </li>
+
+                <!-- 2. Employees -->
+                <li>
+                    <a href="{% url 'employee_list' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'employee' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'employee' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'employee' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-users" style="width: 20px;"></i> Employees
+                    </a>
+                </li>
+
+                <!-- 3. Attendance -->
+                <li>
+                    <a href="{% url 'admin_attendance' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'attendance' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'attendance' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'attendance' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-clock" style="width: 20px;"></i> Attendance
+                    </a>
+                </li>
+
+                <!-- 4. Leave Management -->
+                <li>
+                    <a href="{% url 'admin_leaves' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'leaves' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'leaves' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'leaves' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-calendar-alt" style="width: 20px;"></i> Leave Management
+                    </a>
+                </li>
+
+                <!-- 5. Payroll -->
+                <li>
+                    <a href="{% url 'admin_payroll' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'payroll' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'payroll' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'payroll' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-money-bill-wave" style="width: 20px;"></i> Payroll
+                    </a>
+                </li>
+
+                <!-- 6. Departments -->
+                <li>
+                    <a href="{% url 'department_list' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'department' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'department' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'department' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-building" style="width: 20px;"></i> Departments
+                    </a>
+                </li>
+
+                <!-- 7. Designations -->
+                <li>
+                    <a href="{% url 'designation_list' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'designation' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'designation' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'designation' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-id-badge" style="width: 20px;"></i> Designations
+                    </a>
+                </li>
+
+                <!-- 8. Reports -->
+                <li>
+                    <a href="{% url 'report_attendance' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'report_' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'report_' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'report_' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-chart-bar" style="width: 20px;"></i> Reports
+                    </a>
+                </li>
+
+                <!-- 9. Notifications -->
+                <li>
+                    <a href="{% url 'admin_notifications' %}"
+                       style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if 'notifications' in request.resolver_match.url_name %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if 'notifications' in request.resolver_match.url_name %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if 'notifications' in request.resolver_match.url_name %}#86bc25{% else %}transparent{% endif %};">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-bell" style="width: 20px;"></i> Notifications
+                        </div>
+                        {% if unread_notifications_count > 0 %}
+                        <span style="background: #ef4444; color: white; border-radius: 50px; padding: 2px 6px; font-size: 0.7rem; font-weight: 800; line-height: 1;">
+                            {{ unread_notifications_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
+
+                <!-- 10. Profile -->
+                <li>
+                    <a href="{% url 'admin_profile_edit' %}"
+                       style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+                              color: {% if request.resolver_match.url_name == 'admin_profile_edit' %}#fff{% else %}#9ca3af{% endif %};
+                              background: {% if request.resolver_match.url_name == 'admin_profile_edit' %}rgba(134,188,37,0.15){% else %}transparent{% endif %};
+                              border-left: 3px solid {% if request.resolver_match.url_name == 'admin_profile_edit' %}#86bc25{% else %}transparent{% endif %};">
+                        <i class="fas fa-user-circle" style="width: 20px;"></i> My Profile
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #2d3748;">
+            <a href="{% url 'logout' %}" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #ef4444; font-weight: 600; font-size: 0.85rem;">
+                <i class="fas fa-sign-out-alt" style="width: 20px;"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div style="flex: 1; padding: 2rem; background: #f3f4f6; overflow-y: auto;">
+        {% block admin_content %}{% endblock %}
+    </div>
+
+</div>
+{% endblock %}

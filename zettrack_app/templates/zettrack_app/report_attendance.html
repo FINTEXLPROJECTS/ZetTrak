@@ -1,0 +1,93 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: #1f2937;">Reports</h2>
+        <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #6b7280;">Insights and analytics for your organization</p>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="rep-tabs">
+    <a href="{% url 'report_attendance' %}" class="rep-tab rep-tab-active" style="text-decoration:none;">&#128337; Attendance</a>
+    <a href="{% url 'report_payroll' %}" class="rep-tab" style="text-decoration:none;">&#128181; Payroll</a>
+    <a href="{% url 'report_employees' %}" class="rep-tab" style="text-decoration:none;">&#128101; Employee</a>
+    <a href="{% url 'report_leaves' %}" class="rep-tab" style="text-decoration:none;">&#128197; Leave</a>
+    <a href="{% url 'report_departments' %}" class="rep-tab" style="text-decoration:none;">&#127970; Department</a>
+    <a href="{% url 'report_custom' %}" class="rep-tab" style="text-decoration:none;">&#9881; Custom</a>
+</div>
+
+<!-- Filters -->
+<form method="GET" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; background: white; padding: 1rem 1.25rem; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <label style="font-size: 0.82rem; font-weight: 700; color: #374151;">Month:</label>
+    <select name="month" style="padding: 0.5rem 0.75rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; color: #374151; outline: none;">
+        {% for num, name in month_choices %}<option value="{{ num }}" {% if num == month %}selected{% endif %}>{{ name }}</option>{% endfor %}
+    </select>
+    <select name="year" style="padding: 0.5rem 0.75rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; color: #374151; outline: none;">
+        {% for y in year_choices %}<option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>{% endfor %}
+    </select>
+    <label style="font-size: 0.82rem; font-weight: 700; color: #374151;">Department:</label>
+    <select name="dept" style="padding: 0.5rem 0.75rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; color: #374151; outline: none;">
+        <option value="">All</option>
+        {% for d in departments %}<option value="{{ d.id }}" {% if selected_dept == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>{% endfor %}
+    </select>
+    <button type="submit" style="padding: 0.5rem 1.25rem; background: #86bc25; color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Apply</button>
+    <span style="margin-left: auto; font-size: 0.82rem; color: #6b7280;">{{ month_name }} &mdash; {{ total_days }} working days</span>
+</form>
+
+<!-- Table -->
+<div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden;">
+    <table class="rep-table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Present</th>
+                <th>Half Day</th>
+                <th>On Leave</th>
+                <th>Absent</th>
+                <th>Work Hours</th>
+                <th>Attendance %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in report_data %}
+            <tr class="rep-row">
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #86bc25, #6a9e1a); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">{{ row.employee.first_name|first|upper }}</div>
+                        <div>
+                            <div style="font-weight: 700; color: #1f2937; font-size: 0.88rem;">{{ row.employee.get_full_name }}</div>
+                            <div style="font-size: 0.75rem; color: #9ca3af;">{{ row.employee.employee_profile.employee_code|default:"-" }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="color: #6b7280;">{{ row.employee.employee_profile.department.name|default:"-" }}</td>
+                <td><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700;">{{ row.present }}</span></td>
+                <td><span style="background: #fef9c3; color: #854d0e; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700;">{{ row.half_day }}</span></td>
+                <td><span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700;">{{ row.on_leave }}</span></td>
+                <td><span style="background: #fee2e2; color: #dc2626; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700;">{{ row.absent }}</span></td>
+                <td style="font-weight: 600; color: #374151;">{{ row.total_hours }}</td>
+                <td>
+                    {% if total_days > 0 %}
+                    {% widthratio row.present total_days 100 as pct %}
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="background: #f3f4f6; border-radius: 50px; height: 6px; width: 60px; overflow: hidden; flex-shrink: 0;">
+                            <div style="height: 100%; border-radius: 50px; width: {{ pct }}%; background: #86bc25;"></div>
+                        </div>
+                        <span style="font-size: 0.78rem; font-weight: 700; color: #374151;">{{ pct }}%</span>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" style="padding: 3rem; text-align: center; color: #9ca3af;"><div style="font-size: 2rem;">&#128337;</div><div style="font-weight: 600; margin-top: 0.5rem;">No attendance data found</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'zettrack_app/_report_styles.html' %}
+{% endblock %}

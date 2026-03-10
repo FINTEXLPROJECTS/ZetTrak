@@ -1,0 +1,169 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: #1f2937;">Employees</h2>
+        <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #6b7280;">Manage and view your workforce</p>
+    </div>
+</div>
+
+<!-- Top Navigation Tabs (Pill Style) -->
+<div class="att-tabs">
+    <a href="{% url 'employee_list' %}" class="att-tab" style="text-decoration:none;">&#128101; Employees List</a>
+    <a href="{% url 'add_employee' %}" class="att-tab att-tab-active" style="text-decoration:none;">&#10133; Add Employee</a>
+    <a href="{% url 'import_employees' %}" class="att-tab" style="text-decoration:none;">&#128229; Import Employees</a>
+</div>
+
+<div style="max-width: 860px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden;">
+        <!-- Form Header -->
+        <div style="background: linear-gradient(135deg, #86bc25 0%, #6a9e1a 100%); padding: 2rem 2.5rem;">
+            <h2 style="margin: 0; color: white; font-size: 1.4rem; font-weight: 700;">Add New Employee</h2>
+            <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.875rem;">Fill in the details below to create a new employee account.</p>
+        </div>
+
+        <div style="padding: 2.5rem;">
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 600;
+                        {% if message.tags == 'error' %}background:#fef2f2; color:#dc2626; border:1px solid #fecaca;
+                        {% else %}background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Section: Personal Info -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #86bc25; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f7e0;">Personal Information</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="fg">
+                            <label class="flabel">First Name <span style="color:#ef4444;">*</span></label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Last Name <span style="color:#ef4444;">*</span></label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Mobile Number <span style="color:#ef4444;">*</span></label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Email Address <span style="color:#9ca3af; font-weight:400;">(Optional)</span></label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Employment Info -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #86bc25; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f7e0;">Employment Details</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="fg">
+                            <label class="flabel">Employee Code / ID <span style="color:#ef4444;">*</span></label>
+                            {{ form.employee_code }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Joining Date</label>
+                            {{ form.joining_date }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Department</label>
+                            {{ form.department }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Designation</label>
+                            {{ form.designation }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Branch</label>
+                            {{ form.branch }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Shift</label>
+                            {{ form.shift }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Account -->
+                <div style="margin-bottom: 2rem;">
+                    <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #86bc25; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f7e0;">Account Settings</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="fg">
+                            <label class="flabel">Role</label>
+                            {{ form.role }}
+                        </div>
+                        <div class="fg">
+                            <label class="flabel">Password <span style="color:#9ca3af; font-weight:400;">(Leave blank for default)</span></label>
+                            {{ form.password }}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" style="flex: 1; padding: 0.875rem; background: linear-gradient(135deg, #86bc25, #6a9e1a); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        Save Employee
+                    </button>
+                    <a href="{% url 'employee_list' %}" style="flex: 1; text-align: center; text-decoration: none; padding: 0.875rem; border: 2px solid #e5e7eb; border-radius: 12px; color: #6b7280; font-weight: 700; font-size: 0.95rem; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#86bc25'; this.style.color='#86bc25';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280';">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<style>
+    /* Tab Styles (Pill style like Leave Management) */
+    .att-tabs {
+        display: flex; gap: 0.5rem; padding: 0.4rem; background: white;
+        border-radius: 14px; margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        width: fit-content; flex-wrap: wrap;
+    }
+    .att-tab {
+        padding: 0.6rem 1.1rem; border: none; border-radius: 10px;
+        font-size: 0.8rem; font-weight: 600; color: #6b7280;
+        cursor: pointer; background: transparent; transition: all 0.2s;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .att-tab:hover { color: #111827; background: #86bc25; }
+    .att-tab-active { background: #86bc25 !important; color: #111827 !important; font-weight: 700; }
+
+    .fg { display: flex; flex-direction: column; }
+    .flabel {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.4rem;
+    }
+    .fg input, .fg select {
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: #1f2937;
+        background: #f9fafb;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        box-sizing: border-box;
+    }
+    .fg input:focus, .fg select:focus {
+        border-color: #86bc25;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(134,188,37,0.12);
+    }
+    .fg select {
+        appearance: auto;
+        cursor: pointer;
+    }
+    .fg input::placeholder { color: #9ca3af; }
+</style>
+{% endblock %}

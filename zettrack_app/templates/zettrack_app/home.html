@@ -1,0 +1,194 @@
+{% extends "zettrack_app/base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-tag">🕒 Every Hour, Accounted</div>
+    <h1>Master Your Attendance & Payroll</h1>
+    <p>The smarter way to manage attendance and payroll. Track employee hours, manage leaves, and process salaries with <strong>Zero Error Time</strong> accuracy.</p>
+    <div class="hero-btns">
+        <a href="{% url 'signup' %}" class="btn-white">Get Started</a>
+        <a href="{% url 'how_to_use' %}" class="btn-outline">Watch Demo</a>
+    </div>
+</section>
+
+
+<section id="about" class="about-section">
+    <div class="about-content">
+        <div class="hero-tag" style="background: rgba(0, 0, 0, 0.08); color: black !important;">Our Vision & Mission</div>
+        <h2>Revolutionizing HR Operations</h2>
+        <p>ZetTrak is a modern workforce management platform that integrates attendance tracking, payroll processing, and employee management into one seamless system. Built for efficiency and accuracy, ZetTrak helps businesses automate HR operations and focus on what matters most — their people.</p>
+        <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin-top: 2rem; text-align: left;">
+            <div class="feature-item">
+                <span class="icon"><i class="fas fa-rocket"></i></span>
+                <h3>Our Mission</h3>
+                <p>To simplify human resource management through innovative technology, enabling businesses to manage their most valuable asset—people—with ease and precision.</p>
+            </div>
+            <div class="feature-item">
+                <span class="icon"><i class="fas fa-globe"></i></span>
+                <h3>Our Vision</h3>
+                <p>To become the world's most trusted platform for workforce management, fostering a future where HR operations are seamless, transparent, and data-driven.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="value-prop" style="padding-bottom: 0;">
+    <h2 style="font-size: 2.2rem;">Smart Features, <span>Seamless Operations</span></h2>
+    <p>From smart attendance tracking to automated payroll processing, we've got you covered.</p>
+</section>
+
+<section id="features" class="feature-grid">
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-wallet"></i></span>
+        <h3>Automated Payroll</h3>
+        <p>Say goodbye to spreadsheets. Automatically calculate gross-to-net pay, bonuses, and deductions with localized tax compliance.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-user-clock"></i></span>
+        <h3>Real-time Attendance</h3>
+        <p>Monitor your workforce attendance, shifts, and overtime in real-time from anywhere.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-calendar-check"></i></span>
+        <h3>Leave Management</h3>
+        <p>Streamlined leave application and approval workflow. Automatically sync approved leaves with your payroll cycle for zero errors.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-users-cog"></i></span>
+        <h3>Employee Management</h3>
+        <p>Centralized database to manage employee profiles, documents, and employment history with ease.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-user-tie"></i></span>
+        <h3>Employee Self Service</h3>
+        <p>Empower employees to view payslips, apply for leaves, and update profile information independently.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-stopwatch"></i></span>
+        <h3>Overtime Tracking</h3>
+        <p>Automatically track and calculate overtime hours based on company policy for accurate compensation.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-umbrella-beach"></i></span>
+        <h3>Holiday Calendar</h3>
+        <p>Manage public holidays and optional leaves with a centralized calendar for all branches.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-chart-line"></i></span>
+        <h3>Reports & Analytics</h3>
+        <p>Gain deep insights into workforce trends, attendance patterns, and payroll costs with customizable reports.</p>
+    </div>
+    <div class="feature-item">
+        <span class="icon"><i class="fas fa-user-shield"></i></span>
+        <h3>Role-Based Access</h3>
+        <p>Secure your data with granular permissions for admins, HR managers, and employees.</p>
+    </div>
+</section>
+
+<section id="pricing" class="pricing-section">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h2 style="font-size: 2.2rem; font-weight: 800; color: #000; margin-bottom: 0.75rem;">Transparent Pricing, <span style="color: var(--primary-color);">Zero Surprises</span></h2>
+        <p style="color: #6b7280; font-size: 1rem;">Start for free. Scale when you grow. No hidden fees, no contracts.</p>
+    </div>
+    <div class="pricing-grid">
+        <!-- Free Plan -->
+        <div class="pricing-card">
+            <div class="plan-badge"><i class="fas fa-leaf"></i> Free Forever</div>
+            <div class="price-amount">0</div>
+            <div class="price-desc">per month — up to 10 employees</div>
+            <ul class="feature-list">
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Attendance tracking</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Leave management</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Payroll processing</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Employee self-service portal</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Basic reports</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Email notifications</li>
+            </ul>
+            <a href="{% url 'signup' %}" class="pricing-cta">Get Started Free</a>
+        </div>
+        <!-- Pro Plan -->
+        <div class="pricing-card pro">
+            <div class="plan-badge"><i class="fas fa-star"></i> Pro Plan</div>
+            <div class="price-amount">9</div>
+            <div class="price-desc">per month — for each employee</div>
+            <ul class="feature-list">
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Everything in Free</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Advanced payroll & deductions</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Custom reports & exports</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Department & designation hierarchy</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Bulk employee import</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Priority support</li>
+                <li><span class="check"><i class="fas fa-check-circle"></i></span> Announcements & notifications</li>
+            </ul>
+            <a href="{% url 'contact' %}" class="pricing-cta">Upgrade to Pro</a>
+        </div>
+    </div>
+</section>
+
+<div style="text-align: center; padding: 1rem 5% 0 5%;">
+    <h2 style="font-size: 2.5rem; font-weight: 800; color: black !important; margin-bottom: 0.5rem;">Get in Touch</h2>
+</div>
+
+<section id="contact" class="contact-section" style="padding-top: 1rem;">
+    <div class="contact-grid">
+        <div class="contact-info-cards">
+            <div class="info-card">
+                <div class="icon-box" style="background: var(--primary-color); color: white; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <span style="font-size: 1.2rem;"><i class="fas fa-envelope"></i></span>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; color: #1f2937;">Email Us</h4>
+                <p style="margin-bottom: 0.2rem;">
+                    <a href="mailto:info@zettrak.com" style="color: black !important; font-weight: 700; text-decoration: none;">info@zettrak.com</a>
+                </p>
+            </div>
+
+            <div class="info-card">
+                <div class="icon-box" style="background: var(--primary-color); color: white; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <span style="font-size: 1.2rem;"><i class="fas fa-phone-alt"></i></span>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; color: #1f2937;">Call Us</h4>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 0.8rem;">Available to discuss your requirements:</p>
+                <p style="color: black !important; font-weight: 700;">+91 9603059991</p>
+            </div>
+
+            <div class="info-card">
+                <div class="icon-box" style="background: var(--primary-color); color: white; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <span style="font-size: 1.2rem;"><i class="fas fa-map-marker-alt"></i></span>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; color: #1f2937;">Corporate Office</h4>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 0.8rem;">Visit us at our office:</p>
+                <p style="color: #6b7280; font-size: 0.85rem; line-height: 1.8; margin-bottom: 0.3rem;">Plot No. 92, 1st Floor, Road No. 4, Vasanth Nagar, JNTU College</p>
+                <p style="color: #6b7280; font-size: 0.85rem; line-height: 1.8; margin-bottom: 0.3rem;">Metro Station, Hyderabad, 500085</p>
+                <p style="color: #6b7280; font-size: 0.85rem; line-height: 1.8;">India</p>
+            </div>
+        </div>
+
+        <div class="contact-form-container" style="background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; padding: 3rem;">
+            <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 2rem; color: #1f2937;">Send us a Message</h2>
+            <form>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">Full Name *</label>
+                    <input type="text" style="width: 100%; padding: 1rem; border: none; border-radius: 10px; background: #f8f9fc; font-family: inherit;" placeholder="">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">Email Address *</label>
+                    <input type="email" style="width: 100%; padding: 1rem; border: none; border-radius: 10px; background: #f8f9fc; font-family: inherit;" placeholder="">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">Phone Number</label>
+                    <input type="tel" style="width: 100%; padding: 1rem; border: none; border-radius: 10px; background: #f8f9fc; font-family: inherit;" placeholder="">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">Subject *</label>
+                    <input type="text" style="width: 100%; padding: 1rem; border: none; border-radius: 10px; background: #f8f9fc; font-family: inherit;" placeholder="">
+                </div>
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">Message *</label>
+                    <textarea rows="4" style="width: 100%; padding: 1rem; border: none; border-radius: 10px; background: #f8f9fc; font-family: inherit; resize: none;" placeholder=""></textarea>
+                </div>
+                <button type="submit" class="submit-btn" style="background: var(--primary-color); color: white; padding: 1rem 2.5rem; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; width: auto; min-width: 200px;">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

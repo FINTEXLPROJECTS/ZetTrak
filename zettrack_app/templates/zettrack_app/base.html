@@ -1,0 +1,561 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZetTrack - Payroll & Attendance</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #86bc25;
+            --primary-dark: #6a961d;
+            --text-dark: #000000;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: var(--text-dark);
+        }
+        /* Header Styling */
+        header {
+            background: #fff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+        .logo h2 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #86bc25 !important;
+            font-weight: 800;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+            margin: 0;
+            padding: 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: black;
+        }
+        .header-auth {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .login-btn {
+            text-decoration: none;
+            color: black;
+            font-weight: 700;
+        }
+        .signup-btn {
+            background-color: var(--primary-color);
+            color: black !important;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(134, 188, 37, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--primary-color);
+            color: black !important;
+            padding: 4rem 5% 5rem 5%;
+            text-align: center;
+        }
+        .hero-tag {
+            background: rgba(0,0,0,0.1);
+            color: black !important;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 auto 1.25rem auto;
+            max-width: 900px;
+            line-height: 1.1;
+            color: black !important;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            max-width: 750px;
+            margin: 0 auto 2.5rem auto;
+            line-height: 1.6;
+            color: black !important;
+        }
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .btn-white {
+            background: white;
+            color: black !important;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .btn-outline {
+            border: 2px solid rgba(0,0,0,0.4);
+            color: black !important;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+        .btn-outline:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Contact Section Styling */
+        .contact-section {
+            padding: 3rem 5%;
+            background-color: #ffffff;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .contact-info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .info-card {
+            padding: 2rem;
+            background: #f9fafb;
+            border-radius: 20px;
+            border: 1px solid #eee;
+        }
+        .info-card .icon-box {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        .info-card h4 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .info-card p {
+            color: #6b7280;
+            margin: 0.2rem 0;
+            line-height: 1.5;
+        }
+        .contact-form-container {
+            padding: 3rem;
+            background: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.05);
+            border: 1px solid #f3f4f6;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 3rem 5% 2rem 5%;
+            background: #f8fafc;
+            text-align: center;
+        }
+        .about-content {
+            max-width: 95%;
+            margin: 0 auto;
+        }
+        .about-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+        .about-content p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+        .about-content > p {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* Value Prop Section */
+        .value-prop {
+            padding: 1.5rem 5% 1rem 5%;
+            text-align: center;
+        }
+        .value-prop h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        .value-prop h2 span {
+            color: var(--primary-color);
+        }
+        .value-prop p {
+            color: #6b7280;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Features Section */
+        .feature-grid {
+            padding: 1rem 5% 1.5rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-item {
+            padding: 2rem 1.75rem;
+            background: #fff;
+            border: 2px solid #f3f4f6;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-align: left;
+        }
+        .feature-item:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(134, 188, 37, 0.4);
+        }
+        .feature-item .icon {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .feature-item h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s;
+        }
+        .feature-item p {
+            color: #6b7280;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: color 0.3s;
+            margin: 0;
+        }
+        .feature-item:hover h3,
+        .feature-item:hover p {
+            color: #000000;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 2rem 5%;
+            background: #fff;
+            text-align: center;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            text-align: left;
+            border: 2px solid #f3f4f6;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+        .pricing-card:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(134, 188, 37, 0.4);
+        }
+        .pricing-card.pro {
+            background: linear-gradient(135deg, #1a1f2e, #2d3748);
+            border-color: var(--primary-color);
+            color: #fff;
+            overflow: hidden;
+        }
+        .pricing-card.pro:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #047857;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+        }
+        .pricing-card.pro .plan-badge {
+            background: rgba(134, 188, 37, 0.15);
+            color: var(--primary-color);
+            border: 1px solid rgba(134, 188, 37, 0.3);
+        }
+        .price-amount {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #1f2937;
+            margin-bottom: 0.3rem;
+        }
+        .pricing-card.pro .price-amount {
+            color: #fff;
+        }
+        .price-desc {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .pricing-card.pro .price-desc {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            flex-grow: 1;
+        }
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        .pricing-card.pro .feature-list li {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .feature-list li .check {
+            color: #10b981;
+            font-size: 1.1rem;
+        }
+        .pricing-card.pro .feature-list li .check {
+            color: var(--primary-color);
+        }
+        .pricing-cta {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            background: #f3f4f6;
+            color: #1f2937;
+            transition: 0.3s;
+        }
+        .pricing-card.pro .pricing-cta {
+            background: var(--primary-color);
+            color: #000;
+        }
+        .pricing-card:hover .price-amount,
+        .pricing-card:hover .price-desc,
+        .pricing-card:hover .feature-list li,
+        .pricing-card:hover .plan-badge,
+        .pricing-card:hover .pricing-cta {
+            color: #000 !important;
+        }
+        .pricing-card:hover .pricing-cta {
+            background: #fff !important;
+        }
+        .pricing-card:hover .plan-badge {
+            background: rgba(255, 255, 255, 0.5) !important;
+        }
+        .pricing-card:hover .feature-list li .check {
+            color: #000 !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{% static 'zettrack_app/images/logo.png' %}" alt="ZetTrack Logo">
+            <h2>ZetTrack</h2>
+        </div>
+        <nav>
+            <ul>
+                {% if not user.is_authenticated %}
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'features' %}">Features</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                {% else %}
+                {% endif %}
+            </ul>
+        </nav>
+        <div class="header-auth">
+            {% if user.is_authenticated %}
+                <span style="font-weight: 500; color: #4b5563;">Hello, {{ user.first_name }}</span>
+                <a href="{% url 'logout' %}" class="login-btn">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="login-btn">Login</a>
+                <a href="{% url 'signup' %}" class="signup-btn">Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Toast Container -->
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast-message" style="min-width: 300px; padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease-out forwards; 
+                    {% if message.tags == 'success' %}background: #10b981; color: white;
+                    {% elif message.tags == 'error' %}background: #ef4444; color: white;
+                    {% else %}background: #3b82f6; color: white;{% endif %}">
+                    <span style="font-size: 1.2rem;">
+                        {% if message.tags == 'success' %}&#10004;
+                        {% elif message.tags == 'error' %}&#10006;
+                        {% else %}&#8505;{% endif %}
+                    </span>
+                    <div style="font-weight: 600; font-size: 0.95rem;">{{ message }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll('.toast-message');
+            toasts.forEach(toast => {
+                // Auto-remove after 4 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.5s ease-out forwards';
+                    setTimeout(() => toast.remove(), 500);
+                }, 4000);
+            });
+        });
+    </script>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <p style="text-align: center; padding: 2rem; background: #fff; border-top: 1px solid #eee; margin: 0;">
+            &copy; 2024 ZetTrack. All rights reserved.
+        </p>
+    </footer>
+</body>
+</html>

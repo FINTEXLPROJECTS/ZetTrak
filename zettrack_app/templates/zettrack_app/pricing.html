@@ -1,0 +1,202 @@
+{% extends "zettrack_app/base.html" %}
+
+{% block content %}
+
+<style>
+    .pricing-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        text-align: left;
+        border: 2px solid #f3f4f6;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+    }
+    .pricing-card:hover {
+        background: #86bc25;
+        border-color: #86bc25;
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(134, 188, 37, 0.4);
+    }
+    .pricing-card.pro {
+        background: linear-gradient(135deg, #1a1f2e, #2d3748);
+        border-color: #86bc25;
+        color: #fff;
+        overflow: hidden;
+    }
+    .pricing-card.pro:hover {
+        background: #86bc25;
+        color: #000;
+    }
+    .pricing-card:hover .price-amount,
+    .pricing-card:hover .price-desc,
+    .pricing-card:hover .feature-list li,
+    .pricing-card:hover .plan-badge,
+    .pricing-card:hover .pricing-cta {
+        color: #000 !important;
+    }
+    .pricing-card:hover .pricing-cta {
+        background: #fff !important;
+    }
+    .pricing-card:hover .plan-badge {
+        background: rgba(255, 255, 255, 0.5) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+    .pricing-card:hover .feature-list li i {
+        color: #000 !important;
+    }
+    .pricing-card.pro .price-amount { color: #fff; }
+    .pricing-card.pro .price-desc { color: rgba(255, 255, 255, 0.5); }
+    .pricing-card.pro .feature-list li { color: rgba(255, 255, 255, 0.85); }
+</style>
+
+<!-- Page Hero -->
+<div style="background: #86bc25; color: #000; padding: 5rem 5% 4rem; text-align: center; position: relative; overflow: hidden;">
+    <div style="position:relative;z-index:1;">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.15);color:#000;font-size:0.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0.4rem 1.1rem;border-radius:50px;margin-bottom:1.5rem;">
+            <i class="fas fa-tag"></i> Simple Pricing
+        </div>
+        <h1 style="font-size:3rem;font-weight:900;margin:0 0 1rem;line-height:1.15;color:#000;">
+            Transparent Pricing, <span style="color:#1a1f2e;">Zero Surprises</span>
+        </h1>
+        <p style="font-size:1.1rem;color:rgba(0,0,0,0.65);max-width:560px;margin:0 auto;line-height:1.7;">
+            Start for free. Scale when you grow. No hidden fees, no contracts.
+        </p>
+    </div>
+</div>
+
+<!-- Pricing Cards -->
+<div style="max-width:960px;margin:0 auto;padding:5rem 5%;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;">
+
+    <!-- Free Plan -->
+    <div class="pricing-card">
+        <div class="plan-badge" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(16,185,129,0.1);color:#047857;font-size:0.75rem;font-weight:700;padding:0.3rem 0.8rem;border-radius:50px;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:0.5px;">
+            <i class="fas fa-leaf"></i> Free Forever
+        </div>
+        <div class="price-amount" style="font-size:3.5rem;font-weight:900;color:#1f2937;line-height:1;">$0</div>
+        <div class="price-desc" style="color:#6b7280;font-size:0.9rem;margin-top:0.4rem;margin-bottom:2rem;">per month &mdash; up to 10 employees</div>
+
+        <ul class="feature-list" style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:0.9rem;">
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Up to<strong>10 employees</strong>
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Attendance tracking
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Leave management
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Payroll processing
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Employee self-service portal
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Basic reports
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;color:#374151;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#10b981;flex-shrink:0;"></i> Email notifications
+            </li>
+        </ul>
+
+        <a href="{% url 'signup' %}" class="pricing-cta" style="display:block;text-align:center;background:#f3f4f6;color:#1f2937;padding:0.9rem;border-radius:12px;text-decoration:none;font-weight:700;font-size:1rem;transition:background 0.2s;">
+            Get Started Free
+        </a>
+    </div>
+
+    <!-- Pro Plan -->
+    <div class="pricing-card pro">
+        <!-- glow -->
+        <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(134,188,37,0.2) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+
+        <div class="plan-badge" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(134,188,37,0.15);color:#86bc25;font-size:0.75rem;font-weight:700;padding:0.3rem 0.8rem;border-radius:50px;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:0.5px;border:1px solid rgba(134,188,37,0.3);">
+            <i class="fas fa-star"></i> Pro Plan
+        </div>
+        <div class="price-amount" style="font-size:3.5rem;font-weight:900;line-height:1;">9</div>
+        <div class="price-desc" style="font-size:0.9rem;margin-top:0.4rem;margin-bottom:2rem;">per month &mdash; employees</div>
+
+        <ul class="feature-list" style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:0.9rem;">
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> <strong style="color:inherit;"> for each employee</strong>
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Everything in Free
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Advanced payroll & deductions
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Custom reports & exports
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Department & designation hierarchy
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Bulk employee import
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Priority support
+            </li>
+            <li style="display:flex;align-items:center;gap:0.75rem;font-size:0.95rem;">
+                <i class="fas fa-check-circle" style="color:#86bc25;flex-shrink:0;"></i> Announcements & notifications
+            </li>
+        </ul>
+
+        <a href="{% url 'contact' %}" class="pricing-cta" style="display:block;text-align:center;background:#86bc25;color:white;padding:0.9rem;border-radius:12px;text-decoration:none;font-weight:700;font-size:1rem;box-shadow:0 6px 20px rgba(134,188,37,0.35);position:relative;z-index:1;">
+            Contact Us to Upgrade
+        </a>
+    </div>
+
+</div>
+
+<!-- Comparison note -->
+<div style="text-align:center;padding:0 5% 3rem;">
+    <div style="display:inline-block;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem 2rem;color:#6b7280;font-size:0.9rem;">
+        <i class="fas fa-info-circle" style="color:#86bc25;margin-right:0.5rem;"></i>
+        Your first <strong style="color:#1f2937;">20 employees</strong> are always free — no credit card required.
+        Upgrade anytime as your team grows.
+    </div>
+</div>
+
+<!-- FAQ -->
+<div style="background:#f8fafc;border-top:1px solid #e5e7eb;padding:4rem 5%;">
+    <div style="max-width:700px;margin:0 auto;">
+        <h2 style="text-align:center;font-size:1.8rem;font-weight:800;color:#1f2937;margin:0 0 2.5rem;">Frequently Asked Questions</h2>
+
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+
+            <details style="background:white;border-radius:12px;border:1px solid #e5e7eb;padding:1.25rem 1.5rem;cursor:pointer;">
+                <summary style="font-weight:700;color:#1f2937;font-size:0.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                    Do I need a credit card to sign up? <i class="fas fa-chevron-down" style="color:#86bc25;font-size:0.8rem;"></i>
+                </summary>
+                <p style="margin:0.75rem 0 0;color:#6b7280;line-height:1.7;font-size:0.9rem;">No. The Free plan requires zero payment information. Simply sign up and start managing your team immediately.</p>
+            </details>
+
+            <details style="background:white;border-radius:12px;border:1px solid #e5e7eb;padding:1.25rem 1.5rem;cursor:pointer;">
+                <summary style="font-weight:700;color:#1f2937;font-size:0.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                    What happens when I exceed 20 employees? <i class="fas fa-chevron-down" style="color:#86bc25;font-size:0.8rem;"></i>
+                </summary>
+                <p style="margin:0.75rem 0 0;color:#6b7280;line-height:1.7;font-size:0.9rem;">You will be prompted to upgrade to the Pro plan, which gives you access to all advanced features.</p>
+            </details>
+
+            <details style="background:white;border-radius:12px;border:1px solid #e5e7eb;padding:1.25rem 1.5rem;cursor:pointer;">
+                <summary style="font-weight:700;color:#1f2937;font-size:0.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                    Can I cancel anytime? <i class="fas fa-chevron-down" style="color:#86bc25;font-size:0.8rem;"></i>
+                </summary>
+                <p style="margin:0.75rem 0 0;color:#6b7280;line-height:1.7;font-size:0.9rem;">Yes. There are no long-term contracts. You can downgrade or cancel the Pro plan at any time with no penalties.</p>
+            </details>
+
+            <details style="background:white;border-radius:12px;border:1px solid #e5e7eb;padding:1.25rem 1.5rem;cursor:pointer;">
+                <summary style="font-weight:700;color:#1f2937;font-size:0.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                    Is my data secure? <i class="fas fa-chevron-down" style="color:#86bc25;font-size:0.8rem;"></i>
+                </summary>
+                <p style="margin:0.75rem 0 0;color:#6b7280;line-height:1.7;font-size:0.9rem;">Absolutely. Each company's data is completely isolated. We use industry-standard encryption and secure access controls to protect your workforce data.</p>
+            </details>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

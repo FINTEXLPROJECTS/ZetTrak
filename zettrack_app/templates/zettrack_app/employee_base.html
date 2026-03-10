@@ -1,0 +1,611 @@
+{% extends 'zettrack_app/base.html' %}
+
+{% block extra_css %}
+<style>
+    /* ===== EMPLOYEE PORTAL STYLES ===== */
+    :root {
+        --emp-primary: #86bc25;
+        --emp-primary-dark: #6a961d;
+        --emp-sidebar-bg: #111827;
+        --emp-sidebar-border: #1f2937;
+        --emp-text: #1f2937;
+        --emp-muted: #6b7280;
+        --emp-bg: #f3f4f6;
+        --emp-card-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    /* Hide public header/footer in employee portal */
+    body > header,
+    body > footer {
+        display: none;
+    }
+
+    /* ===== LAYOUT ===== */
+    .emp-layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .emp-sidebar {
+        width: 255px;
+        background: var(--emp-sidebar-bg);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    .emp-sidebar-brand {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--emp-sidebar-border);
+    }
+    .emp-sidebar-brand-name {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--emp-primary);
+        letter-spacing: -0.01em;
+    }
+    .emp-sidebar-user {
+        font-size: 0.78rem;
+        color: #4b5563;
+        margin-top: 0.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .emp-sidebar-nav {
+        flex: 1;
+        padding: 0.75rem 0;
+        list-style: none;
+        margin: 0;
+    }
+    .emp-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.7rem 1.5rem;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #6b7280;
+        border-left: 3px solid transparent;
+        transition: color 0.18s, background 0.18s, border-color 0.18s;
+    }
+    .emp-nav-link:hover {
+        color: #d1d5db;
+        background: rgba(255,255,255,0.04);
+    }
+    .emp-nav-link.active {
+        color: #fff;
+        background: rgba(134,188,37,0.12);
+        border-left-color: var(--emp-primary);
+    }
+    .emp-nav-link .nav-icon {
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    .emp-nav-badge {
+        margin-left: auto;
+        background: #ef4444;
+        color: white;
+        border-radius: 50px;
+        padding: 1px 7px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        line-height: 1.4;
+    }
+    .emp-sidebar-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--emp-sidebar-border);
+    }
+    .emp-logout-link {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        color: #ef4444;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: color 0.2s;
+    }
+    .emp-logout-link:hover {
+        color: #dc2626;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .emp-main {
+        flex: 1;
+        background: var(--emp-bg);
+        overflow-y: auto;
+        min-height: 100vh;
+    }
+    .emp-page {
+        padding: 2rem;
+    }
+    .emp-container {
+        max-width: 920px;
+        margin: 0 auto;
+    }
+    .emp-container-sm {
+        max-width: 560px;
+        margin: 0 auto;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .emp-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    .emp-page-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--emp-text);
+        margin: 0;
+    }
+    .emp-page-subtitle {
+        font-size: 0.82rem;
+        color: var(--emp-muted);
+        margin: 0.2rem 0 0;
+    }
+    .emp-greeting-chip {
+        background: white;
+        padding: 0.5rem 1.1rem;
+        border-radius: 50px;
+        box-shadow: var(--emp-card-shadow);
+        font-weight: 700;
+        color: var(--emp-primary);
+        font-size: 0.9rem;
+    }
+
+    /* ===== CARDS ===== */
+    .emp-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--emp-card-shadow);
+        padding: 1.75rem;
+    }
+    .emp-card + .emp-card {
+        margin-top: 1.5rem;
+    }
+    .emp-card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--emp-text);
+        margin: 0 0 1.25rem;
+    }
+
+    /* ===== STAT DISPLAY ===== */
+    .emp-stat-value {
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--emp-primary);
+        line-height: 1;
+    }
+    .emp-stat-label {
+        font-size: 0.78rem;
+        color: var(--emp-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-top: 0.25rem;
+    }
+
+    /* ===== GRID ===== */
+    .emp-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 1.25rem;
+    }
+    .emp-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    @media (max-width: 600px) {
+        .emp-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* ===== BUTTONS ===== */
+    .emp-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        background: var(--emp-primary);
+        color: white;
+        padding: 0.7rem 1.4rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+        white-space: nowrap;
+    }
+    .emp-btn:hover {
+        background: var(--emp-primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(134,188,37,0.3);
+    }
+    .emp-btn:disabled {
+        background: #d1d5db !important;
+        cursor: not-allowed !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    .emp-btn-red {
+        background: #ef4444;
+    }
+    .emp-btn-red:hover {
+        background: #dc2626;
+        box-shadow: 0 4px 12px rgba(239,68,68,0.3);
+    }
+    .emp-btn-outline {
+        background: transparent;
+        color: var(--emp-muted);
+        border: 1.5px solid #d1d5db;
+        padding: 0.7rem 1.4rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.18s, color 0.18s;
+    }
+    .emp-btn-outline:hover {
+        border-color: var(--emp-primary);
+        color: var(--emp-primary);
+    }
+    .emp-btn-full { width: 100%; }
+
+    /* ===== LINKS ===== */
+    .emp-link {
+        color: var(--emp-primary);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.875rem;
+        transition: color 0.18s;
+    }
+    .emp-link:hover { color: var(--emp-primary-dark); }
+    .emp-link-muted {
+        color: var(--emp-muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: color 0.18s;
+    }
+    .emp-link-muted:hover { color: var(--emp-text); }
+
+    /* ===== TABLES ===== */
+    .emp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .emp-table thead tr {
+        border-bottom: 2px solid #f3f4f6;
+    }
+    .emp-table th {
+        padding: 0.85rem 1rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--emp-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: left;
+    }
+    .emp-table td {
+        padding: 1rem;
+        font-size: 0.88rem;
+        color: var(--emp-text);
+        border-bottom: 1px solid #f9fafb;
+        vertical-align: middle;
+    }
+    .emp-table tbody tr:last-child td { border-bottom: none; }
+    .emp-table tbody tr:hover td { background: #fafafa; }
+    .emp-table .emp-empty td {
+        padding: 3rem;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.9rem;
+    }
+    .emp-td-bold { font-weight: 700; }
+    .emp-td-muted { color: var(--emp-muted); font-size: 0.82rem; }
+
+    /* ===== STATUS BADGES ===== */
+    .emp-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+    .emp-badge-green  { background: #d1fae5; color: #065f46; }
+    .emp-badge-red    { background: #fee2e2; color: #991b1b; }
+    .emp-badge-yellow { background: #fef3c7; color: #92400e; }
+    .emp-badge-blue   { background: #dbeafe; color: #1e40af; }
+    .emp-badge-gray   { background: #f3f4f6; color: #374151; }
+    .emp-badge-purple { background: #f3e8ff; color: #6b21a8; }
+
+    /* ===== FORMS ===== */
+    .emp-form-group { margin-bottom: 1.25rem; }
+    .emp-label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 0.4rem;
+    }
+    .emp-input,
+    .emp-select,
+    .emp-textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        background: #f9fafb;
+        font-family: inherit;
+        font-size: 0.88rem;
+        color: var(--emp-text);
+        transition: border-color 0.18s, background 0.18s;
+        box-sizing: border-box;
+    }
+    .emp-input:focus,
+    .emp-select:focus,
+    .emp-textarea:focus {
+        outline: none;
+        border-color: var(--emp-primary);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(134,188,37,0.1);
+    }
+    .emp-textarea { resize: vertical; min-height: 80px; }
+    .emp-form-row {
+        display: flex;
+        gap: 1rem;
+    }
+    .emp-form-row > * { flex: 1; }
+    .emp-form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+    }
+    .emp-form-actions > * { flex: 1; }
+
+    /* ===== PUNCH SECTION ===== */
+    .emp-punch-row {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+    }
+    .emp-punch-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .emp-punch-time {
+        font-size: 0.8rem;
+        color: var(--emp-muted);
+    }
+    .emp-clock {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--emp-text);
+        letter-spacing: 0.04em;
+        background: #f9fafb;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.35rem 1rem;
+    }
+    .emp-punch-divider {
+        margin: 1.25rem 0;
+        border: none;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    /* ===== MESSAGES ===== */
+    .emp-messages {
+        margin-bottom: 1.5rem;
+    }
+    .emp-alert {
+        padding: 0.875rem 1.25rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .emp-alert-success { background: #d1fae5; color: #065f46; }
+    .emp-alert-error   { background: #fee2e2; color: #991b1b; }
+    .emp-alert-info    { background: #dbeafe; color: #1e40af; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="emp-layout">
+
+    <!-- Sidebar -->
+    <aside class="emp-sidebar">
+        <div class="emp-sidebar-brand" style="display: flex; align-items: center; gap: 0.75rem;">
+            {% if request.user.company.logo %}
+                <img src="{{ request.user.company.logo.url }}" alt="Logo" style="width: 40px; height: 45px; border-radius: 8px; object-fit: cover; border: 1.5px solid var(--emp-primary);">
+            {% else %}
+                <div style="width: 40px; height: 45px; background: var(--emp-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: #111827; flex-shrink: 0;">
+                    {{ request.user.company.name|first|upper }}
+                </div>
+            {% endif %}
+            <div style="overflow: hidden;">
+                <div class="emp-sidebar-brand-name" style="font-size: 1.2rem; line-height: 1.1;">{{ request.user.company.name }}</div>
+            </div>
+        </div>
+
+        <ul class="emp-sidebar-nav">
+            <li>
+                <a href="{% url 'employee_dashboard' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'employee_dashboard' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'attendance_calendar_employee' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'attendance_calendar_employee' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-clock"></i></span> Attendance
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'leave_apply' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'leave_apply' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-calendar-plus"></i></span> Apply Leave
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'my_regularizations' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'my_regularizations' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-history"></i></span> Leave History
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'payslips' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'payslips' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-money-bill-wave"></i></span> Payslips
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'employee_holidays' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'employee_holidays' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-umbrella-beach"></i></span> Holidays
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'notification_dashboard' %}"
+                   class="emp-nav-link {% if 'notifications' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-bell"></i></span> Notifications
+                    {% if unread_notifications_count > 0 %}
+                    <span class="emp-nav-badge">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'employee_profile' %}"
+                   class="emp-nav-link {% if request.resolver_match.url_name == 'employee_profile' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-user-circle"></i></span> Profile
+                </a>
+            </li>
+            <li>
+                <a href="#" class="emp-nav-link">
+                    <span class="nav-icon"><i class="fas fa-headset"></i></span> Support
+                </a>
+            </li>
+        </ul>
+
+        <div class="emp-sidebar-footer">
+            <a href="{% url 'logout' %}" class="emp-logout-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="emp-main">
+        {% if messages %}
+        <div style="padding: 1rem 2rem 0;">
+            {% for message in messages %}
+            <div class="emp-alert {% if message.tags == 'success' %}emp-alert-success{% elif message.tags == 'error' %}emp-alert-error{% else %}emp-alert-info{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block employee_content %}{% endblock %}
+    </main>
+
+</div>
+
+<script>
+    // Real-time notification polling
+    let lastNotifCount = {{ unread_notifications_count|default:0 }};
+    
+    function checkNotifications() {
+        fetch("{% url 'get_unread_notifications' %}")
+            .then(response => response.json())
+            .then(data => {
+                const countBadge = document.querySelector('.emp-nav-badge');
+                
+                // Update badge
+                if (data.count > 0) {
+                    if (countBadge) {
+                        countBadge.textContent = data.count;
+                    } else {
+                        // Create badge if it doesn't exist
+                        const navLink = document.querySelector('a[href*="notifications"]');
+                        if (navLink) {
+                            const badge = document.createElement('span');
+                            badge.className = 'emp-nav-badge';
+                            badge.textContent = data.count;
+                            navLink.appendChild(badge);
+                        }
+                    }
+                } else if (countBadge) {
+                    countBadge.remove();
+                }
+
+                // Show toast for NEW notifications
+                if (data.count > lastNotifCount) {
+                    const newNotifs = data.notifications.slice(0, data.count - lastNotifCount);
+                    newNotifs.forEach(n => {
+                        showNotificationToast(n.message, n.type);
+                    });
+                }
+                lastNotifCount = data.count;
+            })
+            .catch(err => console.error('Notification fetch error:', err));
+    }
+
+    function showNotificationToast(message, type) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.style.cssText = `
+            min-width: 300px; padding: 1rem 1.5rem; border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; 
+            align-items: center; gap: 12px; animation: slideIn 0.3s ease-out forwards;
+            background: #3b82f6; color: white; margin-bottom: 10px;
+        `;
+        
+        if (type === 'Leave') toast.style.background = '#f59e0b';
+        else if (type === 'Attendance') toast.style.background = '#3b82f6';
+        else if (type === 'Payroll') toast.style.background = '#10b981';
+
+        toast.innerHTML = `
+            <span style="font-size: 1.2rem;">&#128276;</span>
+            <div style="font-weight: 600; font-size: 0.95rem;">${message}</div>
+        `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'fadeOut 0.5s ease-out forwards';
+            setTimeout(() => toast.remove(), 500);
+        }, 5000);
+    }
+
+    // Poll every 30 seconds
+    if (window.location.pathname.indexOf('notifications') === -1) {
+        setInterval(checkNotifications, 30000);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container">
+
+        <!-- Page Header -->
+        <div class="emp-page-header">
+            <div>
+                <h1 class="emp-page-title">Dashboard</h1>
+                <p class="emp-page-subtitle">Welcome back, {{ user.get_full_name|default:user.email }}</p>
+            </div>
+            <div class="emp-greeting-chip"><i class="fas fa-hand-wave"></i> {{ user.first_name }}</div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="emp-grid" style="margin-bottom: 1.5rem;">
+
+            <!-- Attendance Card -->
+            <div class="emp-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div style="width: 40px; height: 40px; background: rgba(134,188,37,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #86bc25;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4 class="emp-card-title" style="margin: 0;">Attendance</h4>
+                </div>
+                <p style="font-size: 0.85rem; color: #6b7280; margin: 0 0 1.25rem;">Punch in/out and track your attendance history.</p>
+                <a href="{% url 'attendance_calendar_employee' %}" class="emp-link">Go to Attendance &rarr;</a>
+            </div>
+
+            <!-- Leave Balance Card -->
+            <div class="emp-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div style="width: 40px; height: 40px; background: rgba(134,188,37,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #86bc25;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h4 class="emp-card-title" style="margin: 0;">Leave Balance</h4>
+                </div>
+                <div class="emp-stat-value">{{ leave_balance }}</div>
+                <div class="emp-stat-label">Days Available</div>
+                <div style="margin-top: 1.25rem;">
+                    <a href="{% url 'leave_apply' %}" class="emp-link">Apply Leave &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Payslips Card -->
+            <div class="emp-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div style="width: 40px; height: 40px; background: rgba(134,188,37,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #86bc25;">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h4 class="emp-card-title" style="margin: 0;">Payslips</h4>
+                </div>
+                <p style="font-size: 0.85rem; color: #6b7280; margin: 0 0 1.25rem;">Download your latest salary details.</p>
+                <a href="{% url 'payslips' %}" class="emp-link">View All Payslips &rarr;</a>
+            </div>
+
+        </div>
+
+        <!-- Recent Leave Requests -->
+        <div class="emp-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h4 class="emp-card-title" style="margin: 0;">Recent Leave Requests</h4>
+                <a href="{% url 'leave_apply' %}" class="emp-btn" style="font-size: 0.8rem; padding: 0.5rem 1rem;">+ Apply Leave</a>
+            </div>
+            <table class="emp-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Dates</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in recent_leaves %}
+                    <tr>
+                        <td class="emp-td-bold">{{ leave.leave_type }}</td>
+                        <td>{{ leave.start_date|date:"M d" }} &ndash; {{ leave.end_date|date:"M d, Y" }}</td>
+                        <td>
+                            <span class="emp-badge {% if leave.status == 'approved' %}emp-badge-green{% elif leave.status == 'rejected' %}emp-badge-red{% else %}emp-badge-yellow{% endif %}">
+                                {{ leave.status|capfirst }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="emp-empty"><td colspan="3">No recent leave requests.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

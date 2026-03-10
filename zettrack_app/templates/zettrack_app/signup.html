@@ -1,0 +1,397 @@
+{% extends 'zettrack_app/base.html' %}
+
+{% block extra_css %}
+<style>
+    .signup-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        padding: 3rem;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+        border: 1px solid #f3f4f6;
+    }
+
+    .progress-wrapper {
+        margin-bottom: 3rem;
+    }
+
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e5e7eb;
+        z-index: 1;
+        transform: translateY(-50%);
+    }
+
+    .step-dot {
+        width: 35px;
+        height: 35px;
+        background: #fff;
+        border: 2px solid #e5e7eb;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+        color: #9ca3af;
+    }
+
+    .step-dot.active {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        color: #000;
+        box-shadow: 0 0 0 4px rgba(134, 188, 37, 0.2);
+    }
+
+    .step-dot.completed {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #000;
+    }
+
+    .signup-title {
+        font-size: 2rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: #111827;
+    }
+
+    .signup-subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 2.5rem;
+        font-size: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #374151;
+    }
+
+    .form-group label.required::after {
+        content: " *";
+        color: #ef4444;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(134, 188, 37, 0.1);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .signup-btn-primary {
+        flex: 2;
+        background: var(--primary-color);
+        color: #000;
+        padding: 1rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(134, 188, 37, 0.2);
+    }
+
+    .signup-btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(134, 188, 37, 0.3);
+    }
+
+    .signup-btn-secondary {
+        flex: 1;
+        background: #f3f4f6;
+        color: #4b5563;
+        padding: 1rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .signup-btn-secondary:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.95rem;
+        color: #6b7280;
+    }
+
+    .login-link a {
+        color: var(--primary-color);
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    /* Animation */
+    .signup-screen {
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section style="background: #f8fafc; min-height: calc(100vh - 80px); padding: 20px;">
+    <div class="signup-container">
+        <div class="progress-wrapper">
+            <div class="progress-steps">
+                <div class="step-dot active" id="dot-1">1</div>
+                <div class="step-dot" id="dot-2">2</div>
+                <div class="step-dot" id="dot-3">3</div>
+            </div>
+        </div>
+
+        <h2 id="signup-title" class="signup-title">Create your account</h2>
+        <p id="signup-subtitle" class="signup-subtitle">Join ZetTrack for Zero Error Time management</p>
+        
+        <form method="POST" id="signup-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Screen 1: Personal Info -->
+            <div id="screen-1" class="signup-screen">
+                <div class="form-group">
+                    <label class="required">Full Name (Owner/Admin)</label>
+                    {{ form.full_name }}
+                </div>
+                <div class="form-group">
+                    <label class="required">Work Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label class="required">Mobile Number</label>
+                    {{ form.phone }}
+                </div>
+                <div class="form-group">
+                    <label class="required">Password</label>
+                    {{ form.password }}
+                </div>
+                <div class="form-group">
+                    <label class="required">Confirm Password</label>
+                    {{ form.confirm_password }}
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="signup-btn-primary" onclick="nextScreen(2)">Next: Company Setup</button>
+                </div>
+            </div>
+
+            <!-- Screen 2: Company Setup -->
+            <div id="screen-2" class="signup-screen" style="display: none;">
+                <div class="form-group" style="text-align: center; margin-bottom: 2rem;">
+                    <label>Company Logo</label>
+                    <div style="margin-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                        <div id="logo-preview" style="width: 100px; height: 100px; border-radius: 12px; border: 2px dashed #e5e7eb; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f9fafb;">
+                            <span style="color: #9ca3af; font-size: 2rem;">&#128247;</span>
+                        </div>
+                        <input type="file" name="logo" id="id_logo" accept="image/*" style="display: none;" onchange="previewLogo(this)">
+                        <button type="button" class="signup-btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex: none; width: auto;" onclick="document.getElementById('id_logo').click()">
+                            Choose Image
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="required">Company / Business Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label>Company Size</label>
+                    {{ form.size }}
+                </div>
+                <div class="form-group">
+                    <label>Industry</label>
+                    {{ form.industry }}
+                </div>
+                <div class="form-group">
+                    <label class="required">Country</label>
+                    {{ form.country }}
+                </div>
+                <div class="form-group" style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label class="required">State</label>
+                        {{ form.state }}
+                    </div>
+                    <div style="flex: 1;">
+                        <label class="required">City</label>
+                        {{ form.city }}
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="signup-btn-secondary" onclick="nextScreen(1)">Back</button>
+                    <button type="button" class="signup-btn-primary" onclick="nextScreen(3)">Next: Choose Modules</button>
+                </div>
+            </div>
+
+            <!-- Screen 3: Choose Modules -->
+            <div id="screen-3" class="signup-screen" style="display: none;">
+                <div class="form-group">
+                    <label>Primary Use</label>
+                    {{ form.primary_use }}
+                </div>
+                <div class="form-group">
+                    <label>Number of branches</label>
+                    {{ form.no_of_branches }}
+                </div>
+                <div class="form-group">
+                    <label>GSTIN (Optional)</label>
+                    {{ form.gstin }}
+                </div>
+                <div class="form-group">
+                    <label>Referral Source</label>
+                    {{ form.referral_source }}
+                </div>
+                
+                <div style="margin: 1.5rem 0; display: flex; align-items: flex-start; gap: 10px;">
+                    <input type="checkbox" id="terms" required style="width: 18px; height: 18px; margin-top: 3px; cursor: pointer;">
+                    <label for="terms" style="display: inline; font-size: 0.9rem; font-weight: 500; color: #4b5563;">I accept the <a href="#" style="color: var(--primary-color); font-weight: 700;">Terms & Privacy Policy</a></label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="signup-btn-secondary" onclick="nextScreen(2)">Back</button>
+                    <button type="submit" class="signup-btn-primary">Complete Signup</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </div>
+    </div>
+</section>
+
+<script>
+function previewLogo(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('logo-preview');
+            preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            preview.style.borderColor = 'var(--primary-color)';
+            preview.style.background = '#fff';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function nextScreen(screenNum) {
+    // Basic validation for mandatory fields in the current screen
+    const currentScreen = document.querySelector('.signup-screen:not([style*="display: none"])');
+    if (currentScreen) {
+        const currentId = parseInt(currentScreen.id.split('-')[1]);
+        if (screenNum > currentId) {
+            const requiredInputs = currentScreen.querySelectorAll('input[required], select[required]');
+            let allValid = true;
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allValid = false;
+                    input.style.borderColor = '#ef4444';
+                } else {
+                    input.style.borderColor = '#e5e7eb';
+                }
+            });
+
+            if (!allValid) {
+                alert('Please fill in all mandatory fields before proceeding.');
+                return;
+            }
+            
+            // Special validation for password match on screen 1
+            if (currentId === 1) {
+                const pass = document.querySelector('input[name="password"]').value;
+                const confirm = document.querySelector('input[name="confirm_password"]').value;
+                if (pass !== confirm) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+            }
+        }
+    }
+
+    // Hide all screens
+    document.querySelectorAll('.signup-screen').forEach(el => el.style.display = 'none');
+    
+    // Show requested screen
+    document.getElementById('screen-' + screenNum).style.display = 'block';
+    
+    // Update dots
+    document.querySelectorAll('.step-dot').forEach((dot, index) => {
+        const dotNum = index + 1;
+        dot.classList.remove('active', 'completed');
+        if (dotNum === screenNum) {
+            dot.classList.add('active');
+        } else if (dotNum < screenNum) {
+            dot.classList.add('completed');
+        }
+    });
+
+    // Update title and subtitle
+    const titles = {
+        1: 'Create your account',
+        2: 'Company setup',
+        3: 'Choose modules'
+    };
+    const subtitles = {
+        1: 'Join ZetTrack for Zero Error Time management',
+        2: 'Tell us about your business',
+        3: 'Customize your ZetTrack experience'
+    };
+    document.getElementById('signup-title').innerText = titles[screenNum];
+    document.getElementById('signup-subtitle').innerText = subtitles[screenNum];
+    
+    // Scroll to top of container
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+{% endblock %}

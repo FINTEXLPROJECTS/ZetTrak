@@ -1,0 +1,115 @@
+{% extends 'zettrack_app/admin_base.html' %}
+
+{% block admin_content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: #1f2937;">Designations</h2>
+        <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #6b7280;">Manage your company designations</p>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="desig-tabs">
+    <a href="{% url 'designation_list' %}" class="desig-tab" style="text-decoration:none;">&#127991; Designation List</a>
+    <a href="{% url 'add_designation' %}" class="desig-tab" style="text-decoration:none;">&#10133; Add Designation</a>
+    <a href="{% url 'designation_employees' %}" class="desig-tab" style="text-decoration:none;">&#128101; Designation Employees</a>
+    <a href="{% url 'designation_hierarchy' %}" class="desig-tab" style="text-decoration:none;">&#128681; Designation Hierarchy</a>
+    <a href="{% url 'designation_reports' %}" class="desig-tab desig-tab-active" style="text-decoration:none;">&#128202; Designation Reports</a>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+    <h3 style="margin:0; font-size:1.05rem; font-weight:700; color:#374151;">Designation-wise Report &mdash; {{ month_name }}</h3>
+</div>
+
+{% if report_data %}
+<!-- Summary Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    {% for item in report_data %}
+    <div style="background: white; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 4px solid #86bc25;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #86bc25, #6a9e1a); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1rem;">{{ item.designation.name|first|upper }}</div>
+            <div style="font-weight: 700; color: #1f2937; font-size: 0.9rem; line-height: 1.2;">{{ item.designation.name }}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #6b7280; margin-bottom: 0.5rem;">
+            <span>Employees</span>
+            <span style="font-weight: 700; color: #1f2937;">{{ item.employee_count }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #6b7280; margin-bottom: 0.75rem;">
+            <span>Attendance Rate</span>
+            <span style="font-weight: 700; color: {% if item.attendance_rate >= 80 %}#16a34a{% elif item.attendance_rate >= 60 %}#d97706{% else %}#dc2626{% endif %};">{{ item.attendance_rate }}%</span>
+        </div>
+        <div style="background: #f3f4f6; border-radius: 50px; height: 6px; overflow: hidden;">
+            <div style="height: 100%; border-radius: 50px; width: {{ item.attendance_rate }}%; background: {% if item.attendance_rate >= 80 %}#86bc25{% elif item.attendance_rate >= 60 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Table -->
+<div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden;">
+    <table class="desig-table">
+        <thead>
+            <tr>
+                <th>Designation</th>
+                <th>Total Employees</th>
+                <th>Present Days (This Month)</th>
+                <th>Attendance Rate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in report_data %}
+            <tr class="desig-row">
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #86bc25, #6a9e1a); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;">{{ item.designation.name|first|upper }}</div>
+                        <span style="font-weight: 700; color: #1f2937;">{{ item.designation.name }}</span>
+                    </div>
+                </td>
+                <td><span style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700;">{{ item.employee_count }}</span></td>
+                <td style="font-weight: 600; color: #374151;">{{ item.present_days }}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="background: #f3f4f6; border-radius: 50px; height: 8px; width: 80px; overflow: hidden; flex-shrink: 0;">
+                            <div style="height: 100%; border-radius: 50px; width: {{ item.attendance_rate }}%; background: {% if item.attendance_rate >= 80 %}#86bc25{% elif item.attendance_rate >= 60 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                        </div>
+                        <span style="font-weight: 700; font-size: 0.85rem; color: {% if item.attendance_rate >= 80 %}#16a34a{% elif item.attendance_rate >= 60 %}#d97706{% else %}#dc2626{% endif %};">{{ item.attendance_rate }}%</span>
+                    </div>
+                </td>
+                <td>
+                    <a href="{% url 'designation_employees' %}?desig={{ item.designation.id }}" class="action-btn action-view">View Employees</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 3rem; text-align: center; color: #9ca3af;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128202;</div>
+                    <div style="font-weight: 600;">No designation data available</div>
+                    <div style="font-size: 0.85rem; margin-top: 0.25rem;"><a href="{% url 'add_designation' %}" style="color: #86bc25; font-weight: 700;">Add designations</a> to see reports.</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .desig-tabs { display: flex; gap: 0.5rem; padding: 0.4rem; background: white; border-radius: 14px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); width: fit-content; flex-wrap: wrap; }
+    .desig-tab { padding: 0.6rem 1.1rem; border: none; border-radius: 10px; font-size: 0.8rem; font-weight: 600; color: #6b7280; cursor: pointer; background: transparent; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .desig-tab:hover { color: #111827; background: #86bc25; }
+    .desig-tab-active { background: #86bc25 !important; color: #111827 !important; font-weight: 700; }
+    .desig-table { width: 100%; border-collapse: collapse; }
+    .desig-table thead tr { background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
+    .desig-table th { padding: 0.9rem 1.25rem; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; }
+    .desig-table td { padding: 1rem 1.25rem; font-size: 0.875rem; color: #374151; vertical-align: middle; }
+    .desig-row { border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
+    .desig-row:last-child { border-bottom: none; }
+    .desig-row:hover { background: #fafff5; }
+    .action-btn { display: inline-block; padding: 0.35rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-decoration: none; transition: opacity 0.2s; }
+    .action-btn:hover { opacity: 0.8; }
+    .action-view { background: #f0fdf4; color: #16a34a; }
+</style>
+
+{% endblock %}

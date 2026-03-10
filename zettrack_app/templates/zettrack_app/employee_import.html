@@ -1,0 +1,182 @@
+{% extends 'zettrack_app/admin_base.html' %}
+{% load custom_filters %}
+{% block admin_content %}
+
+<!-- Page Header -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:800; color:#1f2937;">Employees</h2>
+        <p style="margin:0.2rem 0 0; font-size:0.85rem; color:#6b7280;">Manage and view your workforce</p>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="imp-tabs">
+    <a href="{% url 'employee_list' %}" class="imp-tab" style="text-decoration:none;">&#128101; Employees List</a>
+    <a href="{% url 'add_employee' %}" class="imp-tab" style="text-decoration:none;">&#10133; Add Employee</a>
+    <a href="{% url 'import_employees' %}" class="imp-tab imp-tab-active" style="text-decoration:none;">&#128229; Import Employees</a>
+</div>
+
+{% if done %}
+<!-- Result Card -->
+<div class="imp-card" style="margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+        <div style="width:52px; height:52px; border-radius:14px; background:{% if created %}#d1fae5{% else %}#fef3c7{% endif %}; display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0;">
+            {% if created %}&#10003;{% else %}&#9888;{% endif %}
+        </div>
+        <div>
+            <div style="font-size:1.1rem; font-weight:800; color:#1f2937;">Import Complete</div>
+            <div style="font-size:0.85rem; color:#6b7280; margin-top:0.15rem;">The import process has finished.</div>
+        </div>
+    </div>
+    <div style="display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:{% if errors %}1.5rem{% else %}0{% endif %};">
+        <div style="background:#d1fae5; border-radius:12px; padding:1rem 1.75rem; text-align:center; min-width:120px;">
+            <div style="font-size:2rem; font-weight:800; color:#065f46;">{{ created }}</div>
+            <div style="font-size:0.78rem; font-weight:700; color:#065f46; text-transform:uppercase; letter-spacing:0.04em; margin-top:0.25rem;">Imported</div>
+        </div>
+        <div style="background:#fef3c7; border-radius:12px; padding:1rem 1.75rem; text-align:center; min-width:120px;">
+            <div style="font-size:2rem; font-weight:800; color:#92400e;">{{ skipped }}</div>
+            <div style="font-size:0.78rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:0.04em; margin-top:0.25rem;">Skipped</div>
+        </div>
+    </div>
+    {% if errors %}
+    <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:1rem 1.25rem;">
+        <div style="font-size:0.82rem; font-weight:700; color:#c2410c; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+            &#9888; Skipped rows &amp; errors
+        </div>
+        <ul style="margin:0; padding-left:1.2rem; display:flex; flex-direction:column; gap:0.35rem;">
+            {% for err in errors %}
+            <li style="font-size:0.82rem; color:#7c2d12;">{{ err }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div style="display:flex; gap:0.75rem; margin-top:1.5rem; flex-wrap:wrap;">
+        <a href="{% url 'import_employees' %}" class="imp-btn">&#128229; Import Another File</a>
+        <a href="{% url 'employee_list' %}" class="imp-btn-outline">&#128101; View Employees</a>
+    </div>
+</div>
+
+{% else %}
+<!-- Step 1: Download Template -->
+<div class="imp-card" style="margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:flex-start; gap:1rem;">
+        <div style="width:44px; height:44px; border-radius:12px; background:#dbeafe; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;">&#128196;</div>
+        <div style="flex:1;">
+            <div style="font-size:1rem; font-weight:800; color:#1f2937; margin-bottom:0.25rem;">Step 1 &mdash; Download the Template</div>
+            <p style="font-size:0.85rem; color:#6b7280; margin:0 0 1rem;">Download the Excel template, fill in your employees' details, and upload it below. Do not remove or rename the header columns.</p>
+            <a href="{% url 'download_employee_template' %}" class="imp-btn" style="background:#2563eb;">
+                &#8659;&nbsp; Download Template (.xlsx)
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Step 2: Upload File -->
+<div class="imp-card">
+    <div style="display:flex; align-items:flex-start; gap:1rem;">
+        <div style="width:44px; height:44px; border-radius:12px; background:#d1fae5; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;">&#128228;</div>
+        <div style="flex:1;">
+            <div style="font-size:1rem; font-weight:800; color:#1f2937; margin-bottom:0.25rem;">Step 2 &mdash; Upload Filled Template</div>
+            <p style="font-size:0.85rem; color:#6b7280; margin:0 0 1.25rem;">Supports <strong>.xlsx</strong> and <strong>.xls</strong> files. Row 1 is the header, Row 2 is notes — data starts from Row 3.</p>
+
+            <form method="POST" enctype="multipart/form-data" id="importForm">
+                {% csrf_token %}
+                <div class="imp-dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                    <div style="font-size:2.5rem; margin-bottom:0.75rem;">&#128229;</div>
+                    <div style="font-weight:700; color:#1f2937; font-size:0.95rem;">Click to select or drag &amp; drop your Excel file</div>
+                    <div id="fileName" style="font-size:0.82rem; color:#6b7280; margin-top:0.5rem;">No file selected</div>
+                    <input type="file" name="excel_file" id="fileInput" accept=".xlsx,.xls" style="display:none;" required>
+                </div>
+
+                <div style="display:flex; gap:0.75rem; margin-top:1.25rem; flex-wrap:wrap;">
+                    <button type="submit" class="imp-btn" id="submitBtn">&#128228;&nbsp; Import Employees</button>
+                    <a href="{% url 'employee_list' %}" class="imp-btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+    .imp-tabs {
+        display:flex; gap:0.5rem; padding:0.4rem; background:white;
+        border-radius:14px; margin-bottom:1.5rem;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
+        width:fit-content; flex-wrap:wrap;
+    }
+    .imp-tab {
+        padding:0.6rem 1.1rem; border:none; border-radius:10px;
+        font-size:0.8rem; font-weight:600; color:#6b7280;
+        cursor:pointer; background:transparent; transition:all 0.2s;
+        display:flex; align-items:center; gap:0.5rem;
+    }
+    .imp-tab:hover { color:#374151; background:#f3f4f6; }
+    .imp-tab-active { background:#86bc25 !important; color:white !important; font-weight:700; }
+
+    .imp-card {
+        background:white; border-radius:16px;
+        box-shadow:0 2px 12px rgba(0,0,0,0.06); padding:1.75rem;
+    }
+    .imp-btn {
+        display:inline-flex; align-items:center; justify-content:center;
+        background:#86bc25; color:white; padding:0.7rem 1.4rem;
+        border:none; border-radius:10px; font-weight:700; font-size:0.875rem;
+        cursor:pointer; text-decoration:none; transition:background 0.18s;
+        white-space:nowrap;
+    }
+    .imp-btn:hover { background:#6a961d; color:white; }
+    .imp-btn-outline {
+        display:inline-flex; align-items:center; justify-content:center;
+        background:transparent; color:#6b7280; border:1.5px solid #d1d5db;
+        padding:0.7rem 1.4rem; border-radius:10px; font-weight:700;
+        font-size:0.875rem; cursor:pointer; text-decoration:none;
+        transition:border-color 0.18s, color 0.18s; white-space:nowrap;
+    }
+    .imp-btn-outline:hover { border-color:#86bc25; color:#86bc25; }
+    .imp-dropzone {
+        border:2px dashed #d1d5db; border-radius:14px; padding:2rem;
+        text-align:center; cursor:pointer; transition:border-color 0.2s, background 0.2s;
+        background:#fafafa;
+    }
+    .imp-dropzone:hover, .imp-dropzone.drag-over {
+        border-color:#86bc25; background:#f0fdf4;
+    }
+</style>
+
+<script>
+    var input = document.getElementById('fileInput');
+    var nameEl = document.getElementById('fileName');
+    var dropzone = document.getElementById('dropzone');
+
+    if (input) {
+        input.addEventListener('change', function () {
+            nameEl.textContent = this.files[0] ? this.files[0].name : 'No file selected';
+        });
+    }
+
+    if (dropzone) {
+        dropzone.addEventListener('dragover', function (e) {
+            e.preventDefault(); this.classList.add('drag-over');
+        });
+        dropzone.addEventListener('dragleave', function () {
+            this.classList.remove('drag-over');
+        });
+        dropzone.addEventListener('drop', function (e) {
+            e.preventDefault(); this.classList.remove('drag-over');
+            var files = e.dataTransfer.files;
+            if (files.length) {
+                input.files = files;
+                nameEl.textContent = files[0].name;
+            }
+        });
+        document.getElementById('importForm') && document.getElementById('importForm').addEventListener('submit', function () {
+            var btn = document.getElementById('submitBtn');
+            btn.textContent = 'Importing…';
+            btn.disabled = true;
+        });
+    }
+</script>
+
+{% endblock %}

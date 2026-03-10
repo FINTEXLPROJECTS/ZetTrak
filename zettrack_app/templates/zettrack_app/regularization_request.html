@@ -1,0 +1,48 @@
+{% extends 'zettrack_app/employee_base.html' %}
+
+{% block employee_content %}
+<div class="emp-page">
+    <div class="emp-container-sm">
+
+        <!-- Page Header -->
+        <div style="margin-bottom: 2rem;">
+            <h1 class="emp-page-title">Attendance Correction</h1>
+            <p class="emp-page-subtitle">Request a correction for missed or incorrect punch times</p>
+        </div>
+
+        <div class="emp-card">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="emp-form-group">
+                    <label class="emp-label">Attendance Date</label>
+                    <input type="date" name="attendance_date" class="emp-input" required>
+                </div>
+
+                <div class="emp-form-row">
+                    <div class="emp-form-group">
+                        <label class="emp-label">Expected Punch In</label>
+                        <input type="time" name="punch_in" class="emp-input">
+                    </div>
+                    <div class="emp-form-group">
+                        <label class="emp-label">Expected Punch Out</label>
+                        <input type="time" name="punch_out" class="emp-input">
+                    </div>
+                </div>
+
+                <div class="emp-form-group">
+                    <label class="emp-label">Reason for Correction</label>
+                    <textarea name="reason" class="emp-textarea" rows="4" required
+                              placeholder="e.g., Forgot to punch, technical issue..."></textarea>
+                </div>
+
+                <div class="emp-form-actions">
+                    <button type="submit" class="emp-btn emp-btn-full">Submit Request</button>
+                    <a href="{% url 'attendance_calendar_employee' %}" class="emp-btn-outline emp-btn-full">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
