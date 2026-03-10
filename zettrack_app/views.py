@@ -747,11 +747,14 @@ def admin_dashboard(request):
     today_attendances = Attendance.objects.filter(
         user__company=company, date=today, punch_in__isnull=False, status='P'
     ).select_related('user__employee_profile__shift')
+    from datetime import time as dtime
+    DEFAULT_LATE_TIME = dtime(11, 0)  # 11:00 AM fallback
     late_count = 0
     for att in today_attendances:
         try:
             shift = att.user.employee_profile.shift
-            if shift and timezone.localtime(att.punch_in).time() > shift.start_time:
+            cutoff = shift.start_time if shift else DEFAULT_LATE_TIME
+            if timezone.localtime(att.punch_in).time() > cutoff:
                 late_count += 1
         except Exception:
             pass

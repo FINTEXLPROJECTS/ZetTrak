@@ -1,0 +1,10 @@
+Django==4.2.23
+asgiref
+sqlparse
+pytz
+tzdata
+openpyxl
+Pillow
+whitenoise
+gunicorn
+python-dotenv
