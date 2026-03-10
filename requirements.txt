@@ -8,3 +8,4 @@ Pillow
 whitenoise
 gunicorn
 python-dotenv
+reportlab
