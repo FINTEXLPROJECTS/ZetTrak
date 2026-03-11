@@ -1,213 +1,444 @@
 {% extends 'zettrack_app/admin_base.html' %}
-
 {% block admin_content %}
-
 <style>
-    .dash-welcome-banner {
-        background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 60%, #3a4a2a 100%);
-        border-radius: 16px;
-        padding: 2rem 2.5rem;
-        margin-bottom: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 8px 32px rgba(134,188,37,0.15);
-    }
-    .dash-welcome-banner::before {
-        content: '';
-        position: absolute;
-        top: -40px; right: -40px;
-        width: 200px; height: 200px;
-        background: radial-gradient(circle, rgba(134,188,37,0.18) 0%, transparent 70%);
-        border-radius: 50%;
-    }
-    .dash-welcome-banner::after {
-        content: '';
-        position: absolute;
-        bottom: -60px; left: 30%;
-        width: 300px; height: 160px;
-        background: radial-gradient(ellipse, rgba(134,188,37,0.08) 0%, transparent 70%);
-        border-radius: 50%;
-    }
-    .dash-avatar {
-        width: 56px; height: 56px;
-        background: linear-gradient(135deg, #86bc25, #5a8a10);
-        border-radius: 14px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.5rem; font-weight: 900; color: white;
-        box-shadow: 0 4px 14px rgba(134,188,37,0.4);
-        flex-shrink: 0;
-    }
-    .dash-stat-card {
-        background: white;
-        border-radius: 14px;
-        padding: 1.4rem 1.6rem;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    .dash-stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.11);
-    }
-    .dash-stat-icon {
-        width: 44px; height: 44px;
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-    }
-    .dash-quick-btn {
-        display: flex; align-items: center; gap: 0.6rem;
-        padding: 0.65rem 1.1rem;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600; font-size: 0.82rem;
-        transition: all 0.18s ease;
-        border: 1.5px solid transparent;
-    }
-    .dash-quick-btn:hover { transform: translateY(-2px); }
+  *,*::before,*::after{box-sizing:border-box}
 
-    @media (max-width: 1024px) {
-        .dash-stats-container {
-            grid-template-columns: repeat(2, 1fr) !important;
-        }
-    }
-    @media (max-width: 600px) {
-        .dash-stats-container {
-            grid-template-columns: repeat(2, 1fr) !important;
-        }
-        .dash-stat-card {
-            padding: 1rem;
-        }
-        .dash-stat-card div:nth-child(3) {
-            font-size: 1.6rem !important;
-        }
-    }
+  /* ── Hero Banner ── */
+  .hero{
+    background:linear-gradient(135deg,#0f172a 0%,#1e293b 55%,#14532d 100%);
+    border-radius:20px;padding:2rem 2.5rem;margin-bottom:1.75rem;
+    display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;right:-60px;top:-60px;
+    width:280px;height:280px;border-radius:50%;
+    background:radial-gradient(circle,rgba(134,188,37,.2) 0%,transparent 70%);
+  }
+  .hero::after{
+    content:'';position:absolute;left:40%;bottom:-80px;
+    width:400px;height:200px;border-radius:50%;
+    background:radial-gradient(ellipse,rgba(134,188,37,.08) 0%,transparent 70%);
+  }
+  .hero-title{color:#fff;font-size:1.8rem;font-weight:900;margin:0 0 .3rem;}
+  .hero-sub{color:rgba(255,255,255,.5);font-size:.85rem;margin:0;}
+  .hero-inline{display:flex;gap:2rem;margin-top:1.4rem;flex-wrap:wrap;}
+  .hero-stat{display:flex;flex-direction:column;}
+  .hero-stat .v{color:#86bc25;font-size:2rem;font-weight:900;line-height:1;}
+  .hero-stat .l{color:rgba(255,255,255,.5);font-size:.72rem;font-weight:600;
+                text-transform:uppercase;letter-spacing:.5px;margin-top:.2rem;}
+  .hero-clock{text-align:right;position:relative;z-index:1;}
+  .hero-time{color:#fff;font-size:2.2rem;font-weight:900;letter-spacing:2px;line-height:1;}
+  .hero-date{color:rgba(255,255,255,.45);font-size:.8rem;margin-top:.3rem;}
+  .hero-greeting{
+    display:inline-block;background:rgba(134,188,37,.15);border:1px solid rgba(134,188,37,.3);
+    border-radius:20px;padding:.2rem .75rem;font-size:.75rem;color:#86bc25;font-weight:700;
+    margin-bottom:.5rem;letter-spacing:.5px;
+  }
+
+  /* ── Status Strip ── */
+  .strip{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.75rem;
+  }
+  .strip-card{
+    background:#fff;border-radius:14px;padding:1.1rem 1.2rem;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    display:flex;align-items:center;gap:1rem;
+    text-decoration:none;transition:transform .15s,box-shadow .15s;
+  }
+  .strip-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.1);}
+  .strip-icon{
+    width:48px;height:48px;border-radius:12px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  }
+  .strip-val{font-size:1.8rem;font-weight:900;line-height:1;}
+  .strip-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;
+             letter-spacing:.4px;color:#9ca3af;margin-top:.15rem;}
+
+  /* ── Main 3-col ── */
+  .main-grid{display:grid;grid-template-columns:1fr 1fr 320px;gap:1.25rem;margin-bottom:1.75rem;}
+
+  .panel{background:#fff;border-radius:14px;padding:1.3rem;
+         box-shadow:0 2px 10px rgba(0,0,0,.06);}
+  .panel-head{
+    font-size:.88rem;font-weight:800;color:#111827;
+    margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;
+  }
+  .panel-head a{font-size:.72rem;font-weight:700;color:#86bc25;text-decoration:none;}
+
+  /* ── Gauge ring ── */
+  .gauge-wrap{position:relative;width:160px;height:160px;margin:0 auto .75rem;}
+  .gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+  .gauge-center .big{font-size:2rem;font-weight:900;color:#111827;line-height:1;}
+  .gauge-center .sm{font-size:.65rem;color:#9ca3af;font-weight:600;}
+
+  /* ── Timeline ── */
+  .tl-item{display:flex;gap:.75rem;padding:.55rem 0;position:relative;}
+  .tl-item+.tl-item::before{
+    content:'';position:absolute;left:15px;top:0;bottom:0;
+    width:2px;background:#f3f4f6;
+  }
+  .tl-dot{
+    width:32px;height:32px;border-radius:50%;flex-shrink:0;z-index:1;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.75rem;font-weight:800;color:#fff;
+  }
+  .tl-body{flex:1;}
+  .tl-name{font-size:.82rem;font-weight:700;color:#111827;}
+  .tl-meta{font-size:.7rem;color:#9ca3af;margin-top:.1rem;}
+
+  /* ── Action tiles ── */
+  .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
+  .action-tile{
+    border-radius:12px;padding:.85rem .9rem;text-decoration:none;
+    transition:transform .15s,filter .15s;display:flex;flex-direction:column;
+    gap:.3rem;position:relative;overflow:hidden;
+  }
+  .action-tile:hover{transform:translateY(-2px);filter:brightness(1.05);}
+  .action-tile i{font-size:1.2rem;margin-bottom:.2rem;}
+  .action-tile .t{font-size:.78rem;font-weight:800;}
+  .action-tile .s{font-size:.65rem;opacity:.75;}
+
+  /* ── Bottom row ── */
+  .bot-row{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+
+  /* ── Progress rows ── */
+  .prog-row{padding:.55rem 0;border-bottom:1px solid #f3f4f6;}
+  .prog-row:last-child{border-bottom:none;}
+  .prog-label{display:flex;justify-content:space-between;font-size:.78rem;
+              font-weight:700;color:#374151;margin-bottom:.35rem;}
+  .prog-bar{background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:99px;transition:width 1.2s ease;}
+
+  @media(max-width:1100px){.main-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:800px){
+    .main-grid,.bot-row{grid-template-columns:1fr;}
+    .strip{grid-template-columns:repeat(2,1fr);}
+    .hero{grid-template-columns:1fr;}
+    .hero-clock{text-align:left;}
+  }
 </style>
 
-<!-- Welcome Banner -->
-<div class="dash-welcome-banner" style="width: 100%; box-sizing: border-box;">
-    <div style="display: flex; align-items: center; gap: 1.25rem; position: relative; z-index: 1;">
-        {% if request.user.company.logo %}
-            <img src="{{ request.user.company.logo.url }}" alt="Company Logo" class="dash-avatar" style="object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
-        {% else %}
-            <div class="dash-avatar">{{ request.user.company.name|first|upper }}</div>
-        {% endif %}
-        <div>
-            <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">Welcome back</div>
-            <div style="color: #fff; font-size: 1.7rem; font-weight: 800; line-height: 1.2; margin-top: 0.1rem;">
-                {{ request.user.first_name }} <span style="color: #86bc25;">{{ request.user.last_name }}</span>
-            </div>
-        </div>
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div style="position:relative;z-index:1;">
+    <div class="hero-greeting">&#x1F4CA; ADMIN PANEL</div>
+    <div class="hero-title">
+      {% if request.user.company.logo %}
+        <img src="{{ request.user.company.logo.url }}" style="height:32px;border-radius:7px;vertical-align:middle;margin-right:10px;">
+      {% endif %}
+      {{ request.user.company.name }}
     </div>
-    <div style="text-align: right; position: relative; z-index: 1;">
-        <div style="color: #86bc25; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Today</div>
-        <div id="live-date" style="color: #fff; font-size: 1rem; font-weight: 600; margin-top: 0.2rem;"></div>
-        <div id="live-time" style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-top: 0.15rem;"></div>
+    <p class="hero-sub">Welcome back, <strong style="color:rgba(255,255,255,.8);">{{ request.user.first_name }} {{ request.user.last_name }}</strong> — here's your workforce summary.</p>
+    <div class="hero-inline">
+      <div class="hero-stat"><span class="v">{{ total_employees }}</span><span class="l">Total Staff</span></div>
+      <div class="hero-stat"><span class="v" style="color:#10b981;">{{ present_today }}</span><span class="l">Present</span></div>
+      <div class="hero-stat"><span class="v" style="color:#ef4444;">{{ absent }}</span><span class="l">Absent</span></div>
+      <div class="hero-stat"><span class="v" style="color:#3b82f6;">{{ on_leave }}</span><span class="l">On Leave</span></div>
     </div>
+  </div>
+  <div class="hero-clock">
+    <div class="hero-time" id="htime">--:--:--</div>
+    <div class="hero-date" id="hdate">Loading...</div>
+    <div style="margin-top:.8rem;">
+      <span style="background:rgba(16,185,129,.2);color:#10b981;border-radius:8px;
+                   padding:.3rem .75rem;font-size:.72rem;font-weight:700;">
+        &#x25CF; Live
+      </span>
+    </div>
+  </div>
 </div>
 
-<!-- Stats Grid -->
-<div class="dash-stats-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; width: 100%;">
+<!-- ══ STATUS STRIP ══ -->
+<div class="strip">
+  <a href="{% url 'admin_late_arrivals' %}" class="strip-card">
+    <div class="strip-icon" style="background:rgba(245,158,11,.12);color:#f59e0b;">
+      <i class="fas fa-clock"></i>
+    </div>
+    <div>
+      <div class="strip-val" style="color:#f59e0b;">{{ late_count }}</div>
+      <div class="strip-lbl">Late Arrivals</div>
+    </div>
+  </a>
+  <a href="{% url 'admin_leaves' %}" class="strip-card">
+    <div class="strip-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6;">
+      <i class="fas fa-hourglass-half"></i>
+    </div>
+    <div>
+      <div class="strip-val" style="color:#8b5cf6;">{{ pending_leaves }}</div>
+      <div class="strip-lbl">Pending Leaves</div>
+    </div>
+  </a>
+  <a href="{% url 'admin_present_today' %}" class="strip-card">
+    <div class="strip-icon" style="background:rgba(16,185,129,.12);color:#10b981;">
+      <i class="fas fa-user-check"></i>
+    </div>
+    <div>
+      <div class="strip-val" style="color:#10b981;">{{ present_today }}</div>
+      <div class="strip-lbl">Checked In</div>
+    </div>
+  </a>
+  <a href="{% url 'admin_absent_today' %}" class="strip-card">
+    <div class="strip-icon" style="background:rgba(239,68,68,.12);color:#ef4444;">
+      <i class="fas fa-user-times"></i>
+    </div>
+    <div>
+      <div class="strip-val" style="color:#ef4444;">{{ absent }}</div>
+      <div class="strip-lbl">Absent Today</div>
+    </div>
+  </a>
+</div>
 
-    <!-- Total Employees -->
-    <a href="{% url 'employee_list' %}" class="dash-stat-card" style="border-top: 3px solid #86bc25; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(134,188,37,0.12); color: #86bc25;">
-            <i class="fas fa-users"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total Employees</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #1f2937; margin-top: 0.3rem; line-height: 1;">{{ total_employees }}</div>
-        <div style="font-size: 0.75rem; color: #86bc25; margin-top: 0.4rem; font-weight: 600;">Active workforce</div>
-    </a>
+<!-- ══ MAIN 3-COL ══ -->
+<div class="main-grid">
 
-    <!-- Present Today -->
-    <a href="{% url 'admin_present_today' %}" class="dash-stat-card" style="border-top: 3px solid #10b981; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(16,185,129,0.12); color: #10b981;">
-            <i class="fas fa-user-check"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Present Today</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #10b981; margin-top: 0.3rem; line-height: 1;">{{ present_today }}</div>
-        <div style="font-size: 0.75rem; color: #10b981; margin-top: 0.4rem; font-weight: 600;">Checked in</div>
-    </a>
+  <!-- Line trend chart -->
+  <div class="panel">
+    <div class="panel-head">
+      <span><i class="fas fa-chart-line" style="color:#86bc25;margin-right:.4rem;"></i>Attendance Trend</span>
+      <span style="font-size:.72rem;color:#9ca3af;font-weight:600;">Last 7 days</span>
+    </div>
+    <canvas id="lineChart" height="150"></canvas>
+  </div>
 
-    <!-- Absent Today -->
-    <a href="{% url 'admin_absent_today' %}" class="dash-stat-card" style="border-top: 3px solid #ef4444; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(239,68,68,0.1); color: #ef4444;">
-            <i class="fas fa-user-times"></i>
+  <!-- Donut + legend -->
+  <div class="panel" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="panel-head" style="width:100%;">
+      <span><i class="fas fa-chart-pie" style="color:#3b82f6;margin-right:.4rem;"></i>Today's Split</span>
+    </div>
+    <div class="gauge-wrap">
+      <canvas id="donut"></canvas>
+      <div class="gauge-center">
+        <div class="big" id="rate-val">—</div>
+        <div class="sm">PRESENT</div>
+      </div>
+    </div>
+    <div style="width:100%;">
+      {% for lbl,val,col in presence_legend %}
+      {% empty %}
+      {% endfor %}
+      <div style="display:flex;flex-direction:column;gap:.4rem;width:100%;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.4rem .6rem;background:#f0fdf4;border-radius:8px;">
+          <span style="font-size:.78rem;font-weight:700;color:#059669;">&#9679; Present</span>
+          <strong style="color:#059669;">{{ present_today }}</strong>
         </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Absent Today</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #ef4444; margin-top: 0.3rem; line-height: 1;">{{ absent }}</div>
-        <div style="font-size: 0.75rem; color: #ef4444; margin-top: 0.4rem; font-weight: 600;">Not checked in</div>
-    </a>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.4rem .6rem;background:#eff6ff;border-radius:8px;">
+          <span style="font-size:.78rem;font-weight:700;color:#2563eb;">&#9679; On Leave</span>
+          <strong style="color:#2563eb;">{{ on_leave }}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.4rem .6rem;background:#fef2f2;border-radius:8px;">
+          <span style="font-size:.78rem;font-weight:700;color:#dc2626;">&#9679; Absent</span>
+          <strong style="color:#dc2626;">{{ absent }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- On Leave -->
-    <a href="{% url 'admin_on_leave_today' %}" class="dash-stat-card" style="border-top: 3px solid #3b82f6; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;">
-            <i class="fas fa-umbrella-beach"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">On Leave</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #3b82f6; margin-top: 0.3rem; line-height: 1;">{{ on_leave }}</div>
-        <div style="font-size: 0.75rem; color: #3b82f6; margin-top: 0.4rem; font-weight: 600;">Approved leaves</div>
-    </a>
-
-    <!-- Pending Approvals -->
-    <a href="{% url 'admin_leaves' %}" class="dash-stat-card" style="border-top: 3px solid #f59e0b; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;">
-            <i class="fas fa-hourglass-half"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Pending Approvals</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #f59e0b; margin-top: 0.3rem; line-height: 1;">{{ pending_leaves }}</div>
-        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.4rem; font-weight: 600;">Awaiting action</div>
-    </a>
-
-    <!-- Late Arrivals -->
-    <a href="{% url 'admin_late_arrivals' %}" class="dash-stat-card" style="border-top: 3px solid #8b5cf6; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">
-            <i class="fas fa-clock"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Late Arrivals</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #8b5cf6; margin-top: 0.3rem; line-height: 1;">{{ late_count }}</div>
-        <div style="font-size: 0.75rem; color: #8b5cf6; margin-top: 0.4rem; font-weight: 600;">Late check-ins</div>
-    </a>
-
-    <!-- Attendance Rate -->
-    <a href="{% url 'report_attendance' %}" class="dash-stat-card" style="border-top: 3px solid #ec4899; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(236,72,153,0.1); color: #ec4899;">
-            <i class="fas fa-chart-pie"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Attendance Rate</div>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #ec4899; margin-top: 0.3rem; line-height: 1;">
-            {% if total_employees %}{{ present_today|floatformat:0 }}%{% else %}0%{% endif %}
-        </div>
-        <div style="font-size: 0.75rem; color: #ec4899; margin-top: 0.4rem; font-weight: 600;">Today's rate</div>
-    </a>
-
-    <!-- Payroll -->
-    <a href="{% url 'admin_payroll' %}" class="dash-stat-card" style="border-top: 3px solid #06b6d4; text-decoration: none; display: block;">
-        <div class="dash-stat-icon" style="background: rgba(6,182,212,0.1); color: #06b6d4;">
-            <i class="fas fa-money-bill-wave"></i>
-        </div>
-        <div style="color: #6b7280; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Payroll Summary</div>
-        <div style="font-size: 1.3rem; font-weight: 900; color: #06b6d4; margin-top: 0.3rem; line-height: 1;">Pending</div>
-        <div style="font-size: 0.75rem; color: #06b6d4; margin-top: 0.4rem; font-weight: 600;">This month</div>
-    </a>
+  <!-- Quick action tiles -->
+  <div class="panel">
+    <div class="panel-head">
+      <span><i class="fas fa-th" style="color:#f59e0b;margin-right:.4rem;"></i>Quick Actions</span>
+    </div>
+    <div class="action-grid">
+      <a href="{% url 'add_employee' %}" class="action-tile" style="background:linear-gradient(135deg,#86bc25,#5a8a10);color:#fff;">
+        <i class="fas fa-user-plus"></i>
+        <div class="t">Add Employee</div>
+        <div class="s">Onboard new staff</div>
+      </a>
+      <a href="{% url 'admin_leaves' %}" class="action-tile" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;">
+        <i class="fas fa-clipboard-list"></i>
+        <div class="t">Leave Queue</div>
+        <div class="s">{{ pending_leaves }} pending</div>
+      </a>
+      <a href="{% url 'admin_regularizations' %}" class="action-tile" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">
+        <i class="fas fa-edit"></i>
+        <div class="t">Regularize</div>
+        <div class="s">Fix attendance</div>
+      </a>
+      <a href="{% url 'admin_payroll' %}" class="action-tile" style="background:linear-gradient(135deg,#10b981,#047857);color:#fff;">
+        <i class="fas fa-money-bill-wave"></i>
+        <div class="t">Payroll</div>
+        <div class="s">This month</div>
+      </a>
+      <a href="{% url 'report_attendance' %}" class="action-tile" style="background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff;">
+        <i class="fas fa-file-alt"></i>
+        <div class="t">Reports</div>
+        <div class="s">Export data</div>
+      </a>
+      <a href="{% url 'send_announcement' %}" class="action-tile" style="background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;">
+        <i class="fas fa-bullhorn"></i>
+        <div class="t">Announce</div>
+        <div class="s">Notify staff</div>
+      </a>
+    </div>
+  </div>
 
 </div>
 
+<!-- ══ BOTTOM ROW ══ -->
+<div class="bot-row">
+
+  <!-- Workforce health bars -->
+  <div class="panel">
+    <div class="panel-head">
+      <span><i class="fas fa-heartbeat" style="color:#ef4444;margin-right:.4rem;"></i>Workforce Health</span>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label"><span>Attendance Rate</span><span id="att-rate-lbl">—</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="att-fill" style="background:linear-gradient(90deg,#86bc25,#5a8a10);width:0%;"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label">
+        <span>On Time Rate</span>
+        <span id="ontime-lbl">—</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="ontime-fill" style="background:linear-gradient(90deg,#3b82f6,#1d4ed8);width:0%;"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label">
+        <span>Leave Utilisation</span>
+        <span id="leave-lbl">—</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="leave-fill" style="background:linear-gradient(90deg,#f59e0b,#b45309);width:0%;"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label">
+        <span>Absent Rate</span>
+        <span id="absent-lbl">—</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="absent-fill" style="background:linear-gradient(90deg,#ef4444,#b91c1c);width:0%;"></div></div>
+    </div>
+  </div>
+
+  <!-- Summary tiles -->
+  <div class="panel">
+    <div class="panel-head">
+      <span><i class="fas fa-layer-group" style="color:#06b6d4;margin-right:.4rem;"></i>Summary</span>
+      <a href="{% url 'employee_list' %}">View All &rarr;</a>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem;">
+      <div style="text-align:center;padding:1rem .5rem;background:#f9fafb;border-radius:12px;">
+        <div style="font-size:1.7rem;font-weight:900;color:#86bc25;">{{ total_employees }}</div>
+        <div style="font-size:.68rem;color:#9ca3af;font-weight:700;margin-top:.2rem;">STAFF</div>
+      </div>
+      <div style="text-align:center;padding:1rem .5rem;background:#f0fdf4;border-radius:12px;">
+        <div style="font-size:1.7rem;font-weight:900;color:#10b981;">{{ present_today }}</div>
+        <div style="font-size:.68rem;color:#9ca3af;font-weight:700;margin-top:.2rem;">IN TODAY</div>
+      </div>
+      <div style="text-align:center;padding:1rem .5rem;background:#fef2f2;border-radius:12px;">
+        <div style="font-size:1.7rem;font-weight:900;color:#ef4444;">{{ absent }}</div>
+        <div style="font-size:.68rem;color:#9ca3af;font-weight:700;margin-top:.2rem;">ABSENT</div>
+      </div>
+      <div style="text-align:center;padding:1rem .5rem;background:#eff6ff;border-radius:12px;">
+        <div style="font-size:1.7rem;font-weight:900;color:#3b82f6;">{{ on_leave }}</div>
+        <div style="font-size:.68rem;color:#9ca3af;font-weight:700;margin-top:.2rem;">ON LEAVE</div>
+      </div>
+      <div style="text-align:center;padding:1rem .5rem;background:#fffbeb;border-radius:12px;">
+        <div style="font-size:1.7rem;font-weight:900;color:#f59e0b;">{{ late_count }}</div>
+        <div style="font-size:.68rem;color:#9ca3af;font-weight:700;margin-top:.2rem;">LATE</div>
+      </div>
+      <div style="text-align:center;padding:1rem .5rem;background:#faf5ff;border-radius:12px;">
+        <div style="font-size:1.7rem;font-weight:900;color:#8b5cf6;">{{ pending_leaves }}</div>
+        <div style="font-size:.68rem;color:#9ca3af;font-weight:700;margin-top:.2rem;">PENDING</div>
+      </div>
+    </div>
+    <a href="{% url 'employee_list' %}"
+       style="display:flex;align-items:center;justify-content:center;gap:.5rem;
+              background:linear-gradient(135deg,#0f172a,#1e293b);color:#86bc25;
+              text-decoration:none;border-radius:10px;padding:.75rem;
+              font-size:.82rem;font-weight:800;letter-spacing:.3px;
+              transition:opacity .15s;"
+       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      <i class="fas fa-users"></i> Manage All Employees
+    </a>
+  </div>
+
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script>
-    function updateDateTime() {
-        const d = new Date();
-        document.getElementById('live-date').textContent = d.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('live-time').textContent = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-</script>
+  // Clock
+  (function tick(){
+    const d=new Date();
+    document.getElementById('htime').textContent=d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('hdate').textContent=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    setTimeout(tick,1000);
+  })();
 
+  // Data
+  const total={{ total_employees|default:0 }};
+  const present={{ present_today|default:0 }};
+  const onLeave={{ on_leave|default:0 }};
+  const absent={{ absent|default:0 }};
+  const late={{ late_count|default:0 }};
+
+  // Rate
+  const attRate=total>0?Math.round(present/total*100):0;
+  const ontimeRate=present>0?Math.round((present-late)/present*100):0;
+  const leaveRate=total>0?Math.round(onLeave/total*100):0;
+  const absentRate=total>0?Math.round(absent/total*100):0;
+  document.getElementById('rate-val').textContent=attRate+'%';
+  document.getElementById('att-rate-lbl').textContent=attRate+'%';
+  document.getElementById('ontime-lbl').textContent=ontimeRate+'%';
+  document.getElementById('leave-lbl').textContent=leaveRate+'%';
+  document.getElementById('absent-lbl').textContent=absentRate+'%';
+  setTimeout(()=>{
+    document.getElementById('att-fill').style.width=attRate+'%';
+    document.getElementById('ontime-fill').style.width=ontimeRate+'%';
+    document.getElementById('leave-fill').style.width=leaveRate+'%';
+    document.getElementById('absent-fill').style.width=absentRate+'%';
+  },200);
+
+  // Donut
+  new Chart(document.getElementById('donut'),{
+    type:'doughnut',
+    data:{
+      labels:['Present','On Leave','Absent'],
+      datasets:[{
+        data:[present||.001,onLeave||.001,absent||.001],
+        backgroundColor:['#10b981','#3b82f6','#ef4444'],
+        borderWidth:3,borderColor:'#fff',hoverOffset:8
+      }]
+    },
+    options:{
+      cutout:'76%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${Math.round(c.parsed)}`}}},
+      animation:{duration:1000}
+    }
+  });
+
+  // Line chart (uses today's data as a flat reference — replace with real weekly data from view)
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  new Chart(document.getElementById('lineChart'),{
+    type:'line',
+    data:{
+      labels:days,
+      datasets:[
+        {
+          label:'Present',
+          data:[present,present,present,present,present,0,0],
+          borderColor:'#86bc25',backgroundColor:'rgba(134,188,37,.1)',
+          tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#86bc25',borderWidth:2.5
+        },
+        {
+          label:'Absent',
+          data:[absent,absent,absent,absent,absent,0,0],
+          borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.06)',
+          tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#ef4444',borderWidth:2
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{font:{size:11,weight:'700'},boxWidth:12,padding:14}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:11}}},
+        y:{beginAtZero:true,grid:{color:'#f3f4f6'},ticks:{precision:0,font:{size:11}}}
+      }
+    }
+  });
+</script>
 {% endblock %}
