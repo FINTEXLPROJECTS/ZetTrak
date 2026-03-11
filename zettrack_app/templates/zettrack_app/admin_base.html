@@ -1,10 +1,60 @@
 {% extends 'zettrack_app/base.html' %}
 
 {% block content %}
-<div style="display: flex; min-height: 100vh;">
+<style>
+    body > header, body > footer { display: none; }
+    #admin-layout { display: flex; min-height: 100vh; }
+    #admin-sidebar {
+        width: 260px; background: #1a1f2e; color: white;
+        padding: 1.5rem 0; flex-shrink: 0; display: flex;
+        flex-direction: column; transition: transform 0.3s ease;
+    }
+    #admin-main { flex: 1; padding: 2rem; background: #f3f4f6; overflow-y: auto; }
+    .admin-mobile-header {
+        display: none; background: #1a1f2e; padding: 1rem 1.5rem;
+        align-items: center; justify-content: space-between;
+        position: sticky; top: 0; z-index: 1000;
+    }
+    .admin-mobile-header .mobile-brand { color: #86bc25; font-size: 1.2rem; font-weight: 800; }
+    .admin-hamburger {
+        background: none; border: none; cursor: pointer;
+        display: flex; flex-direction: column; gap: 5px; padding: 0.3rem;
+    }
+    .admin-hamburger span {
+        display: block; width: 22px; height: 2px;
+        background: #fff; border-radius: 2px; transition: 0.3s;
+    }
+    .admin-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .admin-hamburger.open span:nth-child(2) { opacity: 0; }
+    .admin-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .admin-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5); z-index: 999;
+    }
+    @media (max-width: 768px) {
+        .admin-mobile-header { display: flex; }
+        #admin-sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0;
+            z-index: 1000; transform: translateX(-100%);
+        }
+        #admin-sidebar.sidebar-open { transform: translateX(0); }
+        .admin-overlay.overlay-open { display: block; }
+        #admin-main { padding: 1rem; }
+    }
+</style>
+
+<div class="admin-mobile-header">
+    <span class="mobile-brand">{{ request.user.company.name }}</span>
+    <button class="admin-hamburger" id="admin-hamburger" aria-label="Toggle sidebar">
+        <span></span><span></span><span></span>
+    </button>
+</div>
+<div class="admin-overlay" id="admin-overlay"></div>
+
+<div id="admin-layout">
 
     <!-- Admin Sidebar -->
-    <div style="width: 260px; background: #1a1f2e; color: white; padding: 1.5rem 0; flex-shrink: 0; display: flex; flex-direction: column;">
+    <div id="admin-sidebar" style="background: #1a1f2e; color: white; padding: 1.5rem 0; display: flex; flex-direction: column;">
         <div style="padding: 1.5rem; border-bottom: 1px solid #2d3748; display: flex; align-items: center; gap: 1rem;">
             {% if request.user.company.logo %}
                 <img src="{{ request.user.company.logo.url }}" alt="Logo" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; border: 1.5px solid #86bc25;">
@@ -149,9 +199,27 @@
     </div>
 
     <!-- Main Content Area -->
-    <div style="flex: 1; padding: 2rem; background: #f3f4f6; overflow-y: auto;">
+    <div id="admin-main">
         {% block admin_content %}{% endblock %}
     </div>
 
 </div>
+
+<script>
+    const adminHamburger = document.getElementById('admin-hamburger');
+    const adminSidebar = document.getElementById('admin-sidebar');
+    const adminOverlay = document.getElementById('admin-overlay');
+    if (adminHamburger && adminSidebar) {
+        adminHamburger.addEventListener('click', () => {
+            adminHamburger.classList.toggle('open');
+            adminSidebar.classList.toggle('sidebar-open');
+            adminOverlay.classList.toggle('overlay-open');
+        });
+        adminOverlay.addEventListener('click', () => {
+            adminHamburger.classList.remove('open');
+            adminSidebar.classList.remove('sidebar-open');
+            adminOverlay.classList.remove('overlay-open');
+        });
+    }
+</script>
 {% endblock %}

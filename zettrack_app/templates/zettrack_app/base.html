@@ -475,6 +475,94 @@
         .pricing-card:hover .feature-list li .check {
             color: #000 !important;
         }
+
+        /* ===== MOBILE HAMBURGER ===== */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1001;
+        }
+        .hamburger-btn span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: #000;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ===== MOBILE NAV OVERLAY ===== */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 73px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 1.5rem;
+            z-index: 998;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            flex-direction: column;
+            gap: 1.25rem;
+            border-top: 1px solid #eee;
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .mobile-nav ul li a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .mobile-nav-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            border-top: 1px solid #eee;
+            padding-top: 1.25rem;
+        }
+        .mobile-nav-auth a {
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+        @media (max-width: 768px) {
+            .hamburger-btn { display: flex; }
+            header nav, header .header-auth { display: none; }
+            header { padding: 0.85rem 4%; }
+            .logo h2 { font-size: 1.8rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            .hero { padding: 3rem 5% 4rem 5%; }
+            .hero-btns { flex-direction: column; align-items: center; gap: 1rem; }
+            .btn-white, .btn-outline { padding: 0.85rem 2rem; font-size: 1rem; }
+            .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .contact-form-container { padding: 1.5rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .about-section h2 { font-size: 1.8rem; }
+            .value-prop h2 { font-size: 1.6rem; }
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -505,7 +593,34 @@
                 <a href="{% url 'signup' %}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
+        <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobile-nav">
+        <ul>
+            {% if not user.is_authenticated %}
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'features' %}">Features</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'pricing' %}">Pricing</a></li>
+            {% endif %}
+        </ul>
+        <div class="mobile-nav-auth">
+            {% if user.is_authenticated %}
+                <span style="font-weight:600; color:#4b5563; text-align:center;">Hello, {{ user.first_name }}</span>
+                <a href="{% url 'logout' %}" style="background:#f3f4f6; color:#000;">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="background:#f3f4f6; color:#000;">Login</a>
+                <a href="{% url 'signup' %}" style="background:var(--primary-color); color:#000;">Sign Up Free</a>
+            {% endif %}
+        </div>
+    </div>
 
     <!-- Toast Container -->
     <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;">
@@ -539,6 +654,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Hamburger menu toggle
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const mobileNav = document.getElementById('mobile-nav');
+            if (hamburgerBtn && mobileNav) {
+                hamburgerBtn.addEventListener('click', () => {
+                    hamburgerBtn.classList.toggle('open');
+                    mobileNav.classList.toggle('open');
+                });
+                // Close when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                        hamburgerBtn.classList.remove('open');
+                        mobileNav.classList.remove('open');
+                    }
+                });
+            }
+
             const toasts = document.querySelectorAll('.toast-message');
             toasts.forEach(toast => {
                 // Auto-remove after 4 seconds

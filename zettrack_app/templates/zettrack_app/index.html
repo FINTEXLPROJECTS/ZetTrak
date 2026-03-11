@@ -499,9 +499,96 @@
             transition: color 0.3s;
             margin: 0;
         }
-        .feature-item:hover h3, 
+        .feature-item:hover h3,
         .feature-item:hover p {
             color: #000000;
+        }
+
+        /* ===== MOBILE HAMBURGER ===== */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1001;
+        }
+        .hamburger-btn span {
+            display: block; width: 25px; height: 2px;
+            background: #000; border-radius: 2px; transition: all 0.3s;
+        }
+        .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 73px; left: 0; right: 0;
+            background: #fff;
+            padding: 1.5rem;
+            z-index: 998;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            flex-direction: column;
+            gap: 1.25rem;
+            border-top: 1px solid #eee;
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav ul {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; flex-direction: column; gap: 0.9rem;
+        }
+        .mobile-nav ul li a {
+            text-decoration: none; color: #000;
+            font-weight: 600; font-size: 1rem;
+        }
+        .mobile-nav-auth {
+            display: flex; flex-direction: column; gap: 0.75rem;
+            border-top: 1px solid #eee; padding-top: 1.25rem;
+        }
+        .mobile-nav-auth a {
+            text-align: center; padding: 0.75rem;
+            border-radius: 12px; text-decoration: none;
+            font-weight: 700; font-size: 0.95rem;
+        }
+
+        /* ===== RESPONSIVE MEDIA QUERIES ===== */
+        @media (max-width: 768px) {
+            .hamburger-btn { display: flex; }
+            header nav, header .header-auth { display: none; }
+            header { padding: 0.85rem 4%; }
+            .logo h2 { font-size: 1.8rem; }
+
+            .hero { padding: 3rem 5% 4rem 5%; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; margin-bottom: 2rem; }
+            .hero-btns { flex-direction: column; align-items: center; gap: 1rem; }
+            .btn-white, .btn-outline { padding: 0.85rem 2rem; font-size: 1rem; }
+
+            .about-section { padding: 4rem 5%; }
+            .about-section h2 { font-size: 2rem; }
+            .about-content p { font-size: 1rem; }
+
+            .value-prop { padding: 3rem 5% 1rem 5%; }
+            .value-prop h2 { font-size: 1.8rem; }
+
+            .feature-grid {
+                padding: 1rem 5% 3rem 5%;
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+            .feature-item { padding: 2rem 1.5rem; }
+            .feature-item h3 { font-size: 1.2rem; }
+
+            .pricing-section { padding: 3rem 5%; }
+            .pricing-section .section-header h2 { font-size: 2rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+
+            .contact-section { padding: 3rem 5%; }
+            .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .contact-form-container { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -523,7 +610,27 @@
             <a href="#" class="login-btn">Login</a>
             <a href="#" class="signup-btn">Sign Up Free</a>
         </div>
+        <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobile-nav">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="mobile-nav-auth">
+            <a href="#" style="background:#f3f4f6; color:#000;">Login</a>
+            <a href="#" style="background:var(--primary-color); color:#000;">Sign Up Free</a>
+        </div>
+    </div>
 
     <section class="hero">
         <div class="hero-tag">🕒 ZET: Zero Error Time</div>
@@ -697,5 +804,28 @@
     <footer>
         <p>&copy; 2024 ZetTrack. All rights reserved.</p>
     </footer>
+    <script>
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileNav = document.getElementById('mobile-nav');
+        if (hamburgerBtn && mobileNav) {
+            hamburgerBtn.addEventListener('click', () => {
+                hamburgerBtn.classList.toggle('open');
+                mobileNav.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                    hamburgerBtn.classList.remove('open');
+                    mobileNav.classList.remove('open');
+                }
+            });
+            // Close mobile nav when clicking a link
+            mobileNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburgerBtn.classList.remove('open');
+                    mobileNav.classList.remove('open');
+                });
+            });
+        }
+    </script>
 </body>
 </html>

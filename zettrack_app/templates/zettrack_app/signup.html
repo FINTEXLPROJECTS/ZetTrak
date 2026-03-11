@@ -181,6 +181,20 @@
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    @media (max-width: 768px) {
+        .signup-container {
+            margin: 1.5rem auto;
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+        .signup-title { font-size: 1.5rem; }
+        .form-group[style*="display: flex"] {
+            flex-direction: column !important;
+        }
+        .btn-group { flex-direction: column-reverse; }
+        .signup-btn-primary, .signup-btn-secondary { flex: none !important; }
+    }
 </style>
 {% endblock %}
 

@@ -429,14 +429,66 @@
     .emp-alert-success { background: #d1fae5; color: #065f46; }
     .emp-alert-error   { background: #fee2e2; color: #991b1b; }
     .emp-alert-info    { background: #dbeafe; color: #1e40af; }
+
+    /* ===== MOBILE SIDEBAR TOGGLE ===== */
+    .emp-mobile-header {
+        display: none;
+        background: var(--emp-sidebar-bg);
+        padding: 1rem 1.5rem;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    .emp-mobile-brand { color: var(--emp-primary); font-size: 1.2rem; font-weight: 800; }
+    .emp-hamburger {
+        background: none; border: none; cursor: pointer;
+        display: flex; flex-direction: column; gap: 5px; padding: 0.3rem;
+    }
+    .emp-hamburger span {
+        display: block; width: 22px; height: 2px;
+        background: #fff; border-radius: 2px; transition: 0.3s;
+    }
+    .emp-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .emp-hamburger.open span:nth-child(2) { opacity: 0; }
+    .emp-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .emp-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5); z-index: 999;
+    }
+    @media (max-width: 768px) {
+        .emp-mobile-header { display: flex; }
+        .emp-sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0;
+            z-index: 1000; transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .emp-sidebar.sidebar-open { transform: translateX(0); }
+        .emp-overlay.overlay-open { display: block; }
+        .emp-page { padding: 1rem; }
+        .emp-page-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+        .emp-grid { grid-template-columns: 1fr; }
+        .emp-form-row { flex-direction: column; }
+        .emp-punch-row { flex-direction: column; gap: 1rem; }
+        .emp-container { max-width: 100%; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="emp-layout">
 
+    <div class="emp-mobile-header">
+        <span class="emp-mobile-brand">{{ request.user.company.name }}</span>
+        <button class="emp-hamburger" id="emp-hamburger" aria-label="Toggle sidebar">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <div class="emp-overlay" id="emp-overlay"></div>
+
     <!-- Sidebar -->
-    <aside class="emp-sidebar">
+    <aside class="emp-sidebar" id="emp-sidebar">
         <div class="emp-sidebar-brand" style="display: flex; align-items: center; gap: 0.75rem;">
             {% if request.user.company.logo %}
                 <img src="{{ request.user.company.logo.url }}" alt="Logo" style="width: 40px; height: 45px; border-radius: 8px; object-fit: cover; border: 1.5px solid var(--emp-primary);">
@@ -606,6 +658,23 @@
     // Poll every 30 seconds
     if (window.location.pathname.indexOf('notifications') === -1) {
         setInterval(checkNotifications, 30000);
+    }
+
+    // Mobile sidebar toggle
+    const empHamburger = document.getElementById('emp-hamburger');
+    const empSidebar = document.getElementById('emp-sidebar');
+    const empOverlay = document.getElementById('emp-overlay');
+    if (empHamburger && empSidebar) {
+        empHamburger.addEventListener('click', () => {
+            empHamburger.classList.toggle('open');
+            empSidebar.classList.toggle('sidebar-open');
+            empOverlay.classList.toggle('overlay-open');
+        });
+        empOverlay.addEventListener('click', () => {
+            empHamburger.classList.remove('open');
+            empSidebar.classList.remove('sidebar-open');
+            empOverlay.classList.remove('overlay-open');
+        });
     }
 </script>
 {% endblock %}
