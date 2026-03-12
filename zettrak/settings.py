@@ -25,11 +25,7 @@ SECRET_KEY = 'django-insecure-kyc0q$le2ge!*jzr=lwj2$jy1qqu$s*pymiw%fq%(9((9wo0qb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "zettrak.com",
-    "www.zettrak.com",
-    "13.232.61.75"
-]
+ALLOWED_HOSTS = []
 
 
 # Application definition
